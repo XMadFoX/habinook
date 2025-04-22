@@ -2,3 +2,10 @@ commit-msg:
   scripts:
     "commitlint.sh":
       runner: bash
+pre-commit:
+  commands:
+    check:
+      glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
+      # TODO: upd biome in NIXPKGS to 2.0.0-beta.1
+      run: pnpm biome check --write --no-errors-on-unmatched --colors=off {staged_files}
+      stage_fixed: true
