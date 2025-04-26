@@ -10,9 +10,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup Biome
-        uses: biomejs/setup-biome@v2
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
         with:
-          version: latest
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          extra_nix_config: "experimental-features = nix-command flakes"
+      - name: Run Nix Flake Check
+        run: nix flake check
       - name: Run Biome
-        run: biome ci .
+        run: nix develop --command bash -c "pnpm install && pnpm biome ci ."
