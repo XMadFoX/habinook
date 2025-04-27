@@ -4,6 +4,10 @@
 		"esModuleInterop": true,
 		"jsx": "react-jsx",
 		"lib": ["DOM", "DOM.Iterable", "ES2022"],
-		"skipLibCheck": true
+		"skipLibCheck": true,
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["./app/*"]
+		}
 	}
 }
