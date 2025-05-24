@@ -1,13 +1,10 @@
 {
 	"compilerOptions": {
-		"strict": true,
-		"esModuleInterop": true,
 		"jsx": "react-jsx",
-		"lib": ["DOM", "DOM.Iterable", "ES2022"],
+		"moduleResolution": "Bundler",
+		"module": "ESNext",
+		"target": "ES2022",
 		"skipLibCheck": true,
-		"baseUrl": ".",
-		"paths": {
-			"@/*": ["./app/*"]
-		}
+		"strictNullChecks": true
 	}
 }
