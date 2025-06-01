@@ -1,0 +1,20 @@
+{
+	"name": "@habinook/db",
+	"version": "0.0.0",
+	"scripts": {
+		"generate": "drizzle-kit generate",
+		"migrate": "drizzle-kit migrate",
+		"studio": "drizzle-kit studio"
+	},
+	"dependencies": {
+		"dotenv": "^16.5.0",
+		"drizzle-orm": "^0.44.1",
+		"pg": "^8.16.0",
+		"zod": "^3.25.46"
+	},
+	"devDependencies": {
+		"@types/pg": "^8.15.2",
+		"drizzle-kit": "^0.31.1",
+		"tsx": "^4.19.4"
+	}
+}
