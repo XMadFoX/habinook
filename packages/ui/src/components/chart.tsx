@@ -79,6 +79,7 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
 	return (
 		<style
 			dangerouslySetInnerHTML={{
+				// biome-ignore lint/security/noDangerouslySetInnerHtml: secure
 				__html: Object.entries(THEMES)
 					.map(
 						([theme, prefix]) => `
