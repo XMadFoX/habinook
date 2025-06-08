@@ -1,0 +1,11 @@
+services:
+  pg:
+    image: postgres:17.5
+    volumes:
+      - ./data/pg:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: habinook
+      POSTGRES_PASSWORD: habinook
+      POSTGRES_DB: habinook
