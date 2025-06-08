@@ -1,0 +1,10 @@
+{
+	"name": "@habinook/trpc",
+	"version": "0.0.0",
+	"main": "src/index.ts",
+	"packageManager": "pnpm@10.8.0",
+	"dependencies": {
+		"@trpc/server": "^11.2.0",
+		"superjson": "^2.2.2"
+	}
+}
