@@ -1,19 +1,17 @@
-import { createRouter as createTanStackRouter } from "@tanstack/react-router";
-import { routeTree } from "./routeTree.gen";
-import superjson from "superjson";
-import { routerWithQueryClient } from "@tanstack/react-router-with-query";
-import * as TanstackQuery from "./root-provider";
-
+import type { TrpcRouter } from "@habinook/trpc";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { createRouter as createTanStackRouter } from "@tanstack/react-router";
+import { routerWithQueryClient } from "@tanstack/react-router-with-query";
 import {
 	createTRPCClient,
 	httpBatchLink,
 	httpBatchStreamLink,
 } from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
-
-import { TrpcRouter } from "@habinook/trpc";
-import { getContext, Provider } from "./root-provider";
+import superjson from "superjson";
+import { TrpcProvider } from "./root-provider";
+import { routeTree } from "./routeTree.gen";
+import * as TrpcQuery from "./trpc";
 
 export const queryClient = new QueryClient();
 
@@ -34,17 +32,15 @@ export const createRouter = () => {
 		createTanStackRouter({
 			routeTree,
 			context: {
-				...TanstackQuery.getContext(),
+				...TrpcQuery.getContext(),
 			},
 			scrollRestoration: true,
 			defaultPreloadStaleTime: 0,
 			Wrap: (props: { children: React.ReactNode }) => {
-				return (
-					<TanstackQuery.Provider>{props.children}</TanstackQuery.Provider>
-				);
+				return <TrpcProvider>{props.children}</TrpcProvider>;
 			},
 		}),
-		TanstackQuery.getContext().queryClient,
+		TrpcQuery.getContext().queryClient,
 	);
 
 	return router;
