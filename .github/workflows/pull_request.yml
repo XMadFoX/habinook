@@ -2,6 +2,7 @@ name: Code quality
 
 on:
   push:
+    branches: [main]
   pull_request:
 
 jobs:
@@ -18,4 +19,4 @@ jobs:
       - name: Run Nix Flake Check
         run: nix flake check
       - name: Run Biome
-        run: nix develop --command bash -c "pnpm install && pnpm biome ci ."
+        run: nix develop --command bash -c "biome ci ."
