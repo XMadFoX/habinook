@@ -1,5 +1,5 @@
+import path from "node:path";
 import dotenv from "dotenv";
-import path from "path";
 import { z } from "zod/v4";
 
 dotenv.config({ path: path.resolve(process.cwd(), ".env") });
