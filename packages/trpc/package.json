@@ -1,10 +1,12 @@
 {
-	"name": "@habinook/trpc",
-	"version": "0.0.0",
-	"main": "src/index.ts",
-	"packageManager": "pnpm@10.8.0",
-	"dependencies": {
-		"@trpc/server": "^11.4.1",
-		"superjson": "^2.2.2"
-	}
+  "name": "@habinook/trpc",
+  "version": "0.0.0",
+  "main": "src/index.ts",
+  "packageManager": "pnpm@10.8.0",
+  "dependencies": {
+    "@habinook/db": "workspace:^",
+    "@trpc/server": "^11.4.1",
+    "better-auth": "^1.2.10",
+    "superjson": "^2.2.2"
+  }
 }
