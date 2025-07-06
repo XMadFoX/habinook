@@ -1,12 +1,13 @@
-import { trpcRouter } from "@habinook/trpc";
+import { createContext, trpcRouter } from "@habinook/trpc";
 import { createAPIFileRoute } from "@tanstack/react-start/api";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 
-function handler({ request }: { request: Request }) {
+async function handler({ request }: { request: Request }) {
 	return fetchRequestHandler({
 		req: request,
 		router: trpcRouter,
 		endpoint: "/api/trpc",
+		createContext,
 	});
 }
 
