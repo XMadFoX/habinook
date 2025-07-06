@@ -16,8 +16,8 @@ export const frequencies = pgTable("frequencies", {
 		.references(() => habits.id),
 	type: frequencyTypeEnum("type").notNull(),
 	config: jsonb("config").$type<Record<string, unknown>>().notNull(), // e.g., {'days': [1,3,5]} or {'count': 3, 'period': 'week'}
-	activeFrom: date("active_from", { mode: "string" }).notNull(),
-	activeUntil: date("active_until", { mode: "string" }),
+	activeFrom: date("active_from", { mode: "date" }).notNull(),
+	activeUntil: date("active_until", { mode: "date" }),
 });
 
 export const frequenciesRelations = relations(frequencies, ({ one }) => ({

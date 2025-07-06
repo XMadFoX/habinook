@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { user } from "../auth/user.schema";
 import { habits } from "./habits.schema"; // Will be created next
 
@@ -10,8 +10,8 @@ export const categories = pgTable("categories", {
 		.references(() => user.id),
 	name: text("name").notNull(),
 	color: text("color"),
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at").defaultNow().notNull(),
+	createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+	updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
 });
 
 export const categoriesRelations = relations(categories, ({ one, many }) => ({
