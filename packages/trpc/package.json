@@ -1,12 +1,15 @@
 {
-  "name": "@habinook/trpc",
-  "version": "0.0.0",
-  "main": "src/index.ts",
-  "packageManager": "pnpm@10.8.0",
-  "dependencies": {
-    "@habinook/db": "workspace:^",
-    "@trpc/server": "^11.4.1",
-    "better-auth": "^1.2.10",
-    "superjson": "^2.2.2"
-  }
+	"name": "@habinook/trpc",
+	"version": "0.0.0",
+	"main": "src/index.ts",
+	"packageManager": "pnpm@10.8.0",
+	"dependencies": {
+		"@habinook/db": "workspace:^",
+		"@trpc/client": "^11.4.1",
+		"@trpc/server": "^11.4.1",
+		"better-auth": "^1.2.10",
+		"drizzle-orm": "^0.44.1",
+		"superjson": "^2.2.2",
+		"zod": "^3.25.67"
+	}
 }

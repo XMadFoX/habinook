@@ -19,8 +19,8 @@ export const goals = pgTable("goals", {
 	type: goalTypeEnum("type").notNull(),
 	value: decimal("value").notNull(),
 	unit: text("unit"),
-	activeFrom: date("active_from", { mode: "string" }).notNull(),
-	activeUntil: date("active_until", { mode: "string" }),
+	activeFrom: date("active_from", { mode: "date" }).notNull(),
+	activeUntil: date("active_until", { mode: "date" }),
 });
 
 export const goalsRelations = relations(goals, ({ one }) => ({

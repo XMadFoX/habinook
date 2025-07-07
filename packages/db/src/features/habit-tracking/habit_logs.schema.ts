@@ -26,13 +26,13 @@ export const habitLogs = pgTable("habit_logs", {
 	userId: text("user_id")
 		.notNull()
 		.references(() => user.id),
-	targetDate: date("target_date", { mode: "string" }).notNull(),
+	targetDate: date("target_date", { mode: "date" }).notNull(),
 	loggedAt: timestamp("logged_at").defaultNow().notNull(),
 	status: habitStatusEnum("status").notNull(),
 	completedValue: decimal("completed_value"),
 	notes: text("notes"),
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at").defaultNow().notNull(),
+	createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+	updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
 });
 
 export const habitLogsRelations = relations(habitLogs, ({ one }) => ({

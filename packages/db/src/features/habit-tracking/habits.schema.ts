@@ -39,8 +39,8 @@ export const habits = pgTable("habits", {
 	archivedAt: timestamp("archived_at", { mode: "date" }),
 	currentStreak: integer("current_streak").default(0).notNull(),
 	longestStreak: integer("longest_streak").default(0).notNull(),
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at").defaultNow().notNull(),
+	createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+	updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
 });
 
 export const habitsRelations = relations(habits, ({ one, many }) => ({
