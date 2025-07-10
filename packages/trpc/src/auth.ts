@@ -1,5 +1,4 @@
-import * as schema from "@habinook/db";
-import { db } from "@habinook/db";
+import { db, schema } from "@habinook/db";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { reactStartCookies } from "better-auth/react-start";

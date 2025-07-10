@@ -1,10 +1,12 @@
-import { DB, db } from "@habinook/db";
+import { db } from "@habinook/db";
+import { habitStreaks } from "@habinook/db/features/habit-tracking/habit_streaks.schema";
 import {
 	habits,
 	habitTypeEnum,
 } from "@habinook/db/features/habit-tracking/habits.schema";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
+import { updateStreak } from "../../services/streak.service";
 import { createTRPCRouter, protectedProcedure } from "../../trpc";
 
 // Input schema for creating a habit
@@ -106,8 +108,39 @@ export const habitsRouter = createTRPCRouter({
 		}),
 
 	getAll: protectedProcedure.query(async ({ ctx }) => {
-		return db.query.habits.findMany({
+		const userHabits = await db.query.habits.findMany({
 			where: eq(habits.userId, ctx.user.id),
+		});
+
+		// On-request streak update for all user habits
+		for (const habit of userHabits) {
+			await updateStreak(habit.id, ctx.user.id);
+		}
+
+		// Fetch habits again with the now-updated streak data
+		const habitsWithStreaks = await db.query.habits.findMany({
+			where: eq(habits.userId, ctx.user.id),
+			with: {
+				habitStreaks: {
+					orderBy: desc(habitStreaks.endDate),
+				},
+			},
+		});
+
+		// Map the data to include current and longest streak
+		return habitsWithStreaks.map((h) => {
+			const longestStreak = h.habitStreaks.reduce(
+				(max, s) => Math.max(max, s.length),
+				0,
+			);
+			const activeStreak = h.habitStreaks.find((s) => s.endDate === null);
+			const currentStreak = activeStreak ? activeStreak.length : 0;
+
+			return {
+				...h,
+				currentStreak,
+				longestStreak,
+			};
 		});
 	}),
 });
