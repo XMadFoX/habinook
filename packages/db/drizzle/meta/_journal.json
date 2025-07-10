@@ -15,6 +15,13 @@
 			"when": 1751831472986,
 			"tag": "0001_late_madripoor",
 			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "7",
+			"when": 1752166498204,
+			"tag": "0002_round_lethal_legion",
+			"breakpoints": true
 		}
 	]
 }
