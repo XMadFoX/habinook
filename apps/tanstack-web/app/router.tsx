@@ -1,12 +1,8 @@
 import type { TrpcRouter } from "@habinook/trpc";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { routerWithQueryClient } from "@tanstack/react-router-with-query";
-import {
-	createTRPCClient,
-	httpBatchLink,
-	httpBatchStreamLink,
-} from "@trpc/client";
+import { createTRPCClient, httpBatchStreamLink } from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import superjson from "superjson";
 import { TrpcProvider } from "./root-provider";
