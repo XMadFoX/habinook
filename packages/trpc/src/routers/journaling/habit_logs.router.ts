@@ -12,8 +12,15 @@ import { createTRPCRouter, protectedProcedure } from "../../trpc";
 // Input schema for creating a habit log
 export const createHabitLogSchema = z.object({
 	habitId: z.string().uuid(),
-	targetDate: z.date(), // Expect Date object directly
+	targetDate: z.string().transform((str) => {
+		const date = new Date(str);
+		if (isNaN(date.getTime())) {
+			throw new Error("Invalid date format");
+		}
+		return date;
+	}),
 	status: z.enum(habitStatusEnum.enumValues),
+	targetTimeSlot: z.string().optional().nullable(),
 	completedValue: z
 		.number()
 		.optional()
@@ -27,8 +34,9 @@ export const createHabitLogSchema = z.object({
 // Input schema for updating a habit log
 export const updateHabitLogSchema = z.object({
 	id: z.string().uuid(),
-	targetDate: z.date().optional(), // Expect Date object directly
+	targetDate: z.date().optional(),
 	status: z.enum(habitStatusEnum.enumValues).optional(),
+	targetTimeSlot: z.string().optional().nullable(),
 	completedValue: z
 		.number()
 		.optional()
@@ -61,6 +69,7 @@ export const habitLogsRouter = createTRPCRouter({
 					habitId: input.habitId,
 					userId: ctx.user.id,
 					targetDate: input.targetDate,
+					targetTimeSlot: input.targetTimeSlot,
 					loggedAt: new Date(),
 					status: input.status,
 					completedValue: input.completedValue,
@@ -108,8 +117,11 @@ export const habitLogsRouter = createTRPCRouter({
 			}
 
 			return db.query.habitLogs.findMany({
-				where: eq(habitLogs.habitId, input.habitId),
-				orderBy: desc(habitLogs.targetDate),
+				where: and(
+					eq(habitLogs.habitId, input.habitId),
+					eq(habitLogs.userId, ctx.user.id), // Ensure logs belong to the user
+				),
+				orderBy: [desc(habitLogs.targetDate)],
 				limit: input.limit,
 			});
 		}),
@@ -155,6 +167,7 @@ export const habitLogsRouter = createTRPCRouter({
 				.update(habitLogs)
 				.set({
 					...data,
+					targetDate: data.targetDate, // Ensure targetDate is updated correctly
 					updatedAt: new Date(),
 				})
 				.where(eq(habitLogs.id, id))
