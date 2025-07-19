@@ -22,6 +22,13 @@
 			"when": 1752166498204,
 			"tag": "0002_round_lethal_legion",
 			"breakpoints": true
+		},
+		{
+			"idx": 3,
+			"version": "7",
+			"when": 1752251616463,
+			"tag": "0003_stormy_wendell_vaughn",
+			"breakpoints": true
 		}
 	]
 }

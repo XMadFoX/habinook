@@ -27,6 +27,7 @@ export const habitLogs = pgTable("habit_logs", {
 		.notNull()
 		.references(() => user.id),
 	targetDate: date("target_date", { mode: "date" }).notNull(),
+	targetTimeSlot: text("target_time_slot"), // "HH:MM" format for timed habits
 	loggedAt: timestamp("logged_at").defaultNow().notNull(),
 	status: habitStatusEnum("status").notNull(),
 	completedValue: decimal("completed_value"),
