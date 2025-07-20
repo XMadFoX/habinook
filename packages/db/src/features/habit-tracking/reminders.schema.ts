@@ -18,8 +18,8 @@ export const reminders = pgTable("reminders", {
 	days: text("days"), // JSON array of weekdays [0-6] or null for daily,
 	customMessage: text("custom_message"),
 	isActive: boolean("is_active").default(true).notNull(),
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at").defaultNow().notNull(),
+	createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+	updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
 });
 
 export const remindersRelations = relations(reminders, ({ one }) => ({
