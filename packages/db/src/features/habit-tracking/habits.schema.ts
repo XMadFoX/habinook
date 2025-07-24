@@ -2,7 +2,6 @@ import { relations } from "drizzle-orm";
 import {
 	boolean,
 	date,
-	integer,
 	pgEnum,
 	pgTable,
 	text,
@@ -14,6 +13,7 @@ import { categories } from "./categories.schema";
 import { frequencies } from "./frequencies.schema";
 import { goals } from "./goals.schema";
 import { habitLogs } from "./habit_logs.schema";
+import { habitStreaks } from "./habit_streaks.schema";
 import { reminders } from "./reminders.schema";
 
 export const habitTypeEnum = pgEnum("habit_type", [
@@ -37,8 +37,6 @@ export const habits = pgTable("habits", {
 	why: text("why"),
 	startDate: date("start_date", { mode: "date" }).notNull(),
 	archivedAt: timestamp("archived_at", { mode: "date" }),
-	currentStreak: integer("current_streak").default(0).notNull(),
-	longestStreak: integer("longest_streak").default(0).notNull(),
 	createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
 });
@@ -56,4 +54,5 @@ export const habitsRelations = relations(habits, ({ one, many }) => ({
 	frequencies: many(frequencies),
 	reminders: many(reminders),
 	habitLogs: many(habitLogs),
+	habitStreaks: many(habitStreaks),
 }));

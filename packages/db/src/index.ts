@@ -10,3 +10,4 @@ export const db = drizzle({
 });
 
 export type DB = typeof db;
+export { schema };

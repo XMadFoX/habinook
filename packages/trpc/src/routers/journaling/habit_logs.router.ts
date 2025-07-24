@@ -3,9 +3,10 @@ import {
 	habitLogs,
 	habitStatusEnum,
 } from "@habinook/db/features/habit-tracking/habit_logs.schema";
-import { habits } from "@habinook/db/features/habit-tracking/habits.schema"; // Import habits schema for joins
-import { and, asc, desc, eq, gte, lte } from "drizzle-orm"; // Import gte and lte
+import { habits } from "@habinook/db/features/habit-tracking/habits.schema";
+import { and, asc, desc, eq, gte, lte } from "drizzle-orm";
 import { z } from "zod";
+import { updateStreak } from "../../services/streak.service";
 import { createTRPCRouter, protectedProcedure } from "../../trpc";
 
 // Input schema for creating a habit log
@@ -67,7 +68,7 @@ export const habitLogsRouter = createTRPCRouter({
 				})
 				.returning();
 
-			// TODO: Update habit's current_streak and longest_streak here
+			await updateStreak(input.habitId, ctx.user.id);
 
 			return newHabitLog[0];
 		}),
@@ -163,7 +164,7 @@ export const habitLogsRouter = createTRPCRouter({
 				throw new Error("Failed to update habit log");
 			}
 
-			// TODO: Re-calculate habit's streak if status/targetDate changed
+			await updateStreak(existingHabitLog.habit.id, ctx.user.id);
 
 			return updatedHabitLog[0];
 		}),
@@ -185,7 +186,7 @@ export const habitLogsRouter = createTRPCRouter({
 
 			await db.delete(habitLogs).where(eq(habitLogs.id, input.id));
 
-			// TODO: Re-calculate habit's streak
+			await updateStreak(habitLogToDelete.habit.id, ctx.user.id);
 
 			return { success: true };
 		}),
