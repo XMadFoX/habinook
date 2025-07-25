@@ -127,6 +127,9 @@ importers:
 
   packages/trpc:
     dependencies:
+      '@date-fns/tz':
+        specifier: ^1.2.0
+        version: 1.2.0
       '@habinook/db':
         specifier: workspace:^
         version: link:../db
@@ -139,6 +142,9 @@ importers:
       better-auth:
         specifier: ^1.2.10
         version: 1.2.10
+      date-fns:
+        specifier: ^3.6.0
+        version: 3.6.0
       drizzle-orm:
         specifier: ^0.44.1
         version: 0.44.1(@types/pg@8.15.2)(kysely@0.28.2)(pg@8.16.0)
@@ -554,6 +560,9 @@ packages:
 
   '@dabh/diagnostics@2.0.3':
     resolution: {integrity: sha512-hrlQOIi7hAfzsMqlGSFyVucrx38O+j6wiGOf//H2ecvIEqYN4ADBSS2iLMh5UFyDunCNniUIPk/q3riFv45xRA==}
+
+  '@date-fns/tz@1.2.0':
+    resolution: {integrity: sha512-LBrd7MiJZ9McsOgxqWX7AaxrDjcFVjWH/tIKJd7pnR7McaslGYOP1QmmiBXdJH/H/yLCT+rcQ7FaPBUxRGUtrg==}
 
   '@deno/shim-deno-test@0.5.0':
     resolution: {integrity: sha512-4nMhecpGlPi0cSzT67L+Tm+GOJqvuk8gqHBziqcUQOarnuIax1z96/gJHCSIz2Z0zhxE6Rzwb3IZXPtFh51j+w==}
@@ -3334,6 +3343,9 @@ packages:
   data-uri-to-buffer@4.0.1:
     resolution: {integrity: sha512-0R9ikRb668HB7QDxT1vkpuUBtqc53YyAwMwGeUFKRojY/NWKvdZ+9UYtRfGmhqNbRkTSVpMbmyhXipFFv2cb/A==}
     engines: {node: '>= 12'}
+
+  date-fns@3.6.0:
+    resolution: {integrity: sha512-fRHTG8g/Gif+kSh50gaGEdToemgfj74aRX3swtiouboip5JDLAyDE9F11nHMIcvOaXeOC6D7SpNhi7uFyB7Uww==}
 
   date-fns@4.1.0:
     resolution: {integrity: sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==}
@@ -6237,6 +6249,8 @@ snapshots:
       colorspace: 1.1.4
       enabled: 2.0.0
       kuler: 2.0.0
+
+  '@date-fns/tz@1.2.0': {}
 
   '@deno/shim-deno-test@0.5.0': {}
 
@@ -9203,6 +9217,8 @@ snapshots:
 
   data-uri-to-buffer@4.0.1: {}
 
+  date-fns@3.6.0: {}
+
   date-fns@4.1.0: {}
 
   dax-sh@0.39.2:
@@ -11672,7 +11688,7 @@ snapshots:
       unenv: 1.10.0
       unstorage: 1.16.0(db0@0.3.2(drizzle-orm@0.44.1(@types/pg@8.15.2)(kysely@0.28.2)(pg@8.16.0)))(ioredis@5.6.1)
       vite: 6.3.5(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.39.2)(tsx@4.19.4)(yaml@2.7.1)
-      zod: 3.25.46
+      zod: 3.25.67
     transitivePeerDependencies:
       - '@azure/app-configuration'
       - '@azure/cosmos'

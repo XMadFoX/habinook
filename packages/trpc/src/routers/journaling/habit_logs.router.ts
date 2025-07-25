@@ -14,7 +14,7 @@ export const createHabitLogSchema = z.object({
 	habitId: z.string().uuid(),
 	targetDate: z.string().transform((str) => {
 		const date = new Date(str);
-		if (isNaN(date.getTime())) {
+		if (Number.isNaN(date.getTime())) {
 			throw new Error("Invalid date format");
 		}
 		return date;

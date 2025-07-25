@@ -125,7 +125,7 @@ export const updateFrequencySchema = z
 			}
 			try {
 				schemaToUse.parse(data.config);
-			} catch (e) {
+			} catch (_e) {
 				ctx.addIssue({
 					code: z.ZodIssueCode.custom,
 					message: `Invalid config for type '${data.type}'`,
