@@ -16,11 +16,13 @@ export function calculateDailyStreaks(
 	);
 	const logsByDay = new Map<string, HabitLog[]>();
 	for (const log of logs) {
-		const dateKey = log.targetDate.toISOString().split("T")[0]!;
-		if (!logsByDay.has(dateKey)) {
+		const dateKey = log.targetDate.toISOString().split("T")[0];
+		if (dateKey && !logsByDay.has(dateKey)) {
 			logsByDay.set(dateKey, []);
 		}
-		logsByDay.get(dateKey)?.push(log);
+		if (dateKey) {
+			logsByDay.get(dateKey)?.push(log);
+		}
 	}
 
 	const completedDays: Date[] = [];
@@ -51,33 +53,40 @@ export function calculateDailyStreaks(
 	completedDays.sort((a, b) => a.getTime() - b.getTime());
 
 	const streaks: Streak[] = [];
-	let currentStreak: Streak = {
-		startDate: completedDays[0]!,
-		endDate: completedDays[0]!,
-		length: 1,
-	};
+	// Check if we have at least one completed day
+	if (completedDays.length > 0 && completedDays[0]) {
+		let currentStreak: Streak = {
+			startDate: completedDays[0],
+			endDate: completedDays[0],
+			length: 1,
+		};
 
-	for (let i = 1; i < completedDays.length; i++) {
-		const currentDay = completedDays[i]!;
-		const previousDay = completedDays[i - 1]!;
+		for (let i = 1; i < completedDays.length; i++) {
+			const currentDay = completedDays[i];
+			const previousDay = completedDays[i - 1];
 
-		const dayDifference = Math.round(
-			(currentDay.getTime() - previousDay.getTime()) / (1000 * 60 * 60 * 24),
-		);
+			// Check if both days are defined
+			if (currentDay && previousDay) {
+				const dayDifference = Math.round(
+					(currentDay.getTime() - previousDay.getTime()) /
+						(1000 * 60 * 60 * 24),
+				);
 
-		if (dayDifference === 1) {
-			currentStreak.endDate = currentDay;
-			currentStreak.length++;
-		} else if (dayDifference > 1) {
-			streaks.push(currentStreak);
-			currentStreak = {
-				startDate: currentDay,
-				endDate: currentDay,
-				length: 1,
-			};
+				if (dayDifference === 1) {
+					currentStreak.endDate = currentDay;
+					currentStreak.length++;
+				} else if (dayDifference > 1) {
+					streaks.push(currentStreak);
+					currentStreak = {
+						startDate: currentDay,
+						endDate: currentDay,
+						length: 1,
+					};
+				}
+			}
 		}
+		streaks.push(currentStreak);
 	}
-	streaks.push(currentStreak);
 	console.log(
 		`[calculateDailyStreaks] Final streaks: ${JSON.stringify(
 			streaks.map((s) => ({

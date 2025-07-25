@@ -61,18 +61,20 @@ export function calculateTimesPerPeriodStreaks(
 	);
 
 	for (const periodKey of sortedPeriodKeys) {
-		const currentPeriodLogs = logsByPeriod.get(periodKey)!;
-		const numberOfCompletedInstances = currentPeriodLogs.filter((log) =>
-			isDayOrPeriodCompleted(
-				[log],
-				config.times,
-				config.timezoneId,
-				config.completionToleranceMinutes,
-			),
-		).length;
+		const currentPeriodLogs = logsByPeriod.get(periodKey);
+		if (currentPeriodLogs) {
+			const numberOfCompletedInstances = currentPeriodLogs.filter((log) =>
+				isDayOrPeriodCompleted(
+					[log],
+					config.times,
+					config.timezoneId,
+					config.completionToleranceMinutes,
+				),
+			).length;
 
-		if (numberOfCompletedInstances >= config.count) {
-			completedPeriods.push(new Date(periodKey));
+			if (numberOfCompletedInstances >= config.count) {
+				completedPeriods.push(new Date(periodKey));
+			}
 		}
 	}
 
@@ -89,44 +91,50 @@ export function calculateTimesPerPeriodStreaks(
 	}
 
 	const streaks: Streak[] = [];
-	let currentStreak: Streak = {
-		startDate: completedPeriods[0]!,
-		endDate: completedPeriods[0]!,
-		length: 1,
-	};
+	// Check if we have at least one completed period
+	if (completedPeriods.length > 0 && completedPeriods[0]) {
+		let currentStreak: Streak = {
+			startDate: completedPeriods[0],
+			endDate: completedPeriods[0],
+			length: 1,
+		};
 
-	const addOnePeriod = (date: Date): Date => {
-		switch (config.period) {
-			case "day":
-				return addDays(date, 1);
-			case "week":
-				return addWeeks(date, 1);
-			case "month":
-				return addMonths(date, 1);
-			case "year":
-				return addYears(date, 1);
-			default:
-				return new Date(date);
+		const addOnePeriod = (date: Date): Date => {
+			switch (config.period) {
+				case "day":
+					return addDays(date, 1);
+				case "week":
+					return addWeeks(date, 1);
+				case "month":
+					return addMonths(date, 1);
+				case "year":
+					return addYears(date, 1);
+				default:
+					return new Date(date);
+			}
+		};
+
+		for (let i = 1; i < completedPeriods.length; i++) {
+			const prevPeriod = completedPeriods[i - 1];
+			const currPeriod = completedPeriods[i];
+
+			// Check if both periods are defined
+			if (prevPeriod && currPeriod) {
+				if (addOnePeriod(prevPeriod).getTime() === currPeriod.getTime()) {
+					currentStreak.endDate = currPeriod;
+					currentStreak.length++;
+				} else {
+					streaks.push(currentStreak);
+					currentStreak = {
+						startDate: currPeriod,
+						endDate: currPeriod,
+						length: 1,
+					};
+				}
+			}
 		}
-	};
-
-	for (let i = 1; i < completedPeriods.length; i++) {
-		const prevPeriod = completedPeriods[i - 1]!;
-		const currPeriod = completedPeriods[i]!;
-
-		if (addOnePeriod(prevPeriod).getTime() === currPeriod.getTime()) {
-			currentStreak.endDate = currPeriod;
-			currentStreak.length++;
-		} else {
-			streaks.push(currentStreak);
-			currentStreak = {
-				startDate: currPeriod,
-				endDate: currPeriod,
-				length: 1,
-			};
-		}
+		streaks.push(currentStreak);
 	}
-	streaks.push(currentStreak);
 	console.log(
 		`[calculateTimesPerPeriodStreaks] Final streaks: ${JSON.stringify(
 			streaks.map((s) => ({

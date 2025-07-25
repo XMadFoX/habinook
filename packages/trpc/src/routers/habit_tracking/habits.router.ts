@@ -60,7 +60,7 @@ export const habitsRouter = createTRPCRouter({
 				archivedAt: z.date().optional().nullable(), // Expect Date object or null directly
 			}),
 		)
-		.mutation(async ({ ctx, input }) => {
+		.mutation(async ({ input }) => {
 			const { id, ...data } = input;
 			const updatedHabit = await db
 				.update(habits)
@@ -95,7 +95,7 @@ export const habitsRouter = createTRPCRouter({
 
 	get: protectedProcedure
 		.input(z.object({ habitId: z.string().uuid() }))
-		.query(async ({ ctx, input }) => {
+		.query(async ({ input }) => {
 			const habit = await db.query.habits.findFirst({
 				where: eq(habits.id, input.habitId),
 			});

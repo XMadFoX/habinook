@@ -21,26 +21,30 @@ export function calculateEveryXPeriodStreaks(
 	// Group logs by targetDate (YYYY-MM-DD)
 	const logsByDay = new Map<string, HabitLog[]>();
 	for (const log of logs) {
-		const dateKey = log.targetDate.toISOString().split("T")[0]!;
-		if (!logsByDay.has(dateKey)) {
+		const dateKey = log.targetDate.toISOString().split("T")[0];
+		if (dateKey && !logsByDay.has(dateKey)) {
 			logsByDay.set(dateKey, []);
 		}
-		logsByDay.get(dateKey)?.push(log);
+		if (dateKey) {
+			logsByDay.get(dateKey)?.push(log);
+		}
 	}
 
 	const completedDates: Date[] = [];
 	const sortedDateKeys = Array.from(logsByDay.keys()).sort();
 
 	for (const dateKey of sortedDateKeys) {
-		const dailyLogs = logsByDay.get(dateKey)!;
-		const isCompleted = isDayOrPeriodCompleted(
-			dailyLogs,
-			config.times,
-			config.timezoneId,
-			config.completionToleranceMinutes,
-		);
-		if (isCompleted) {
-			completedDates.push(new Date(dateKey));
+		const dailyLogs = logsByDay.get(dateKey);
+		if (dailyLogs) {
+			const isCompleted = isDayOrPeriodCompleted(
+				dailyLogs,
+				config.times,
+				config.timezoneId,
+				config.completionToleranceMinutes,
+			);
+			if (isCompleted) {
+				completedDates.push(new Date(dateKey));
+			}
 		}
 	}
 
@@ -57,59 +61,70 @@ export function calculateEveryXPeriodStreaks(
 	}
 
 	const streaks: Streak[] = [];
-	let currentStreak: Streak = {
-		startDate: completedDates[0]!,
-		endDate: completedDates[0]!,
-		length: 1,
-	};
+	// Check if we have at least one completed date
+	if (completedDates.length > 0 && completedDates[0]) {
+		let currentStreak: Streak = {
+			startDate: completedDates[0],
+			endDate: completedDates[0],
+			length: 1,
+		};
 
-	const addInterval = (date: Date, interval: number, period: Period): Date => {
-		switch (period) {
-			case "day":
-				return addDays(date, interval);
-			case "week":
-				return addWeeks(date, interval);
-			case "month":
-				return addMonths(date, interval);
-			case "year":
-				return addYears(date, interval);
+		const addInterval = (
+			date: Date,
+			interval: number,
+			period: Period,
+		): Date => {
+			switch (period) {
+				case "day":
+					return addDays(date, interval);
+				case "week":
+					return addWeeks(date, interval);
+				case "month":
+					return addMonths(date, interval);
+				case "year":
+					return addYears(date, interval);
+			}
+		};
+
+		for (let i = 1; i < completedDates.length; i++) {
+			const previousDate = currentStreak.endDate;
+			const currentDate = completedDates[i];
+
+			// Check if both dates are defined
+			if (previousDate && currentDate) {
+				const expectedNextDate = addInterval(
+					previousDate,
+					config.interval,
+					config.period,
+				);
+
+				// Normalize both dates to start of day for comparison
+				const expectedNormalized = new Date(
+					expectedNextDate.getFullYear(),
+					expectedNextDate.getMonth(),
+					expectedNextDate.getDate(),
+				).getTime();
+				const currentNormalized = new Date(
+					currentDate.getFullYear(),
+					currentDate.getMonth(),
+					currentDate.getDate(),
+				).getTime();
+
+				if (expectedNormalized === currentNormalized) {
+					currentStreak.endDate = currentDate;
+					currentStreak.length++;
+				} else {
+					streaks.push(currentStreak);
+					currentStreak = {
+						startDate: currentDate,
+						endDate: currentDate,
+						length: 1,
+					};
+				}
+			}
 		}
-	};
-
-	for (let i = 1; i < completedDates.length; i++) {
-		const previousDate = currentStreak.endDate;
-		const expectedNextDate = addInterval(
-			previousDate,
-			config.interval,
-			config.period,
-		);
-		const currentDate = completedDates[i]!;
-
-		// Normalize both dates to start of day for comparison
-		const expectedNormalized = new Date(
-			expectedNextDate.getFullYear(),
-			expectedNextDate.getMonth(),
-			expectedNextDate.getDate(),
-		).getTime();
-		const currentNormalized = new Date(
-			currentDate.getFullYear(),
-			currentDate.getMonth(),
-			currentDate.getDate(),
-		).getTime();
-
-		if (expectedNormalized === currentNormalized) {
-			currentStreak.endDate = currentDate;
-			currentStreak.length++;
-		} else {
-			streaks.push(currentStreak);
-			currentStreak = {
-				startDate: currentDate,
-				endDate: currentDate,
-				length: 1,
-			};
-		}
+		streaks.push(currentStreak);
 	}
-	streaks.push(currentStreak);
 	console.log(
 		`[calculateEveryXPeriodStreaks] Final streaks: ${JSON.stringify(
 			streaks.map((s) => ({

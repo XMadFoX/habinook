@@ -40,7 +40,7 @@ export const categoriesRouter = createTRPCRouter({
 
 	update: protectedProcedure
 		.input(updateCategorySchema)
-		.mutation(async ({ ctx, input }) => {
+		.mutation(async ({ input }) => {
 			const { id, ...data } = input;
 			const updatedCategory = await (db as DB)
 				.update(categories)

@@ -100,7 +100,14 @@ export const updateFrequencySchema = z
 	.superRefine((data, ctx) => {
 		// If type is provided, config must match that type
 		if (data.type && data.config) {
-			let schemaToUse: z.ZodSchema<any>;
+			let schemaToUse: z.ZodSchema<
+				z.infer<
+					| typeof dailyConfigSchema
+					| typeof daysOfWeekConfigSchema
+					| typeof timesPerPeriodConfigSchema
+					| typeof everyXPeriodConfigSchema
+				>
+			>;
 			switch (data.type) {
 				case "daily":
 					schemaToUse = dailyConfigSchema;
@@ -125,7 +132,7 @@ export const updateFrequencySchema = z
 			}
 			try {
 				schemaToUse.parse(data.config);
-			} catch (_e) {
+			} catch (_e: unknown) {
 				ctx.addIssue({
 					code: z.ZodIssueCode.custom,
 					message: `Invalid config for type '${data.type}'`,

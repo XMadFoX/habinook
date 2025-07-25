@@ -389,7 +389,7 @@ export async function updateStreak(
 					streak.endDate,
 					frequency.type,
 					frequency.config,
-					frequency.config.timezoneId!,
+					frequency.config.timezoneId ?? "",
 				)
 			) {
 				finalEndDate = null;

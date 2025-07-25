@@ -20,27 +20,31 @@ export function calculateDaysOfWeekStreaks(
 	const daysSet = new Set(config.days);
 	const logsByDay = new Map<string, HabitLog[]>();
 	for (const log of logs) {
-		const dateKey = log.targetDate.toISOString().split("T")[0]!;
-		if (!logsByDay.has(dateKey)) {
+		const dateKey = log.targetDate.toISOString().split("T")[0];
+		if (dateKey && !logsByDay.has(dateKey)) {
 			logsByDay.set(dateKey, []);
 		}
-		logsByDay.get(dateKey)?.push(log);
+		if (dateKey) {
+			logsByDay.get(dateKey)?.push(log);
+		}
 	}
 
 	const completedDays: Date[] = [];
 	const sortedDateKeys = Array.from(logsByDay.keys()).sort();
 	for (const dateKey of sortedDateKeys) {
-		const dailyLogs = logsByDay.get(dateKey)!;
-		const dayOfWeek = new Date(dateKey).getDay();
-		if (daysSet.has(dayOfWeek)) {
-			const isCompleted = isDayOrPeriodCompleted(
-				dailyLogs,
-				config.times,
-				config.timezoneId,
-				config.completionToleranceMinutes,
-			);
-			if (isCompleted) {
-				completedDays.push(new Date(dateKey));
+		const dailyLogs = logsByDay.get(dateKey);
+		if (dailyLogs) {
+			const dayOfWeek = new Date(dateKey).getDay();
+			if (daysSet.has(dayOfWeek)) {
+				const isCompleted = isDayOrPeriodCompleted(
+					dailyLogs,
+					config.times,
+					config.timezoneId,
+					config.completionToleranceMinutes,
+				);
+				if (isCompleted) {
+					completedDays.push(new Date(dateKey));
+				}
 			}
 		}
 	}
@@ -58,39 +62,49 @@ export function calculateDaysOfWeekStreaks(
 	}
 
 	const streaks: Streak[] = [];
-	let currentStreak: Streak = {
-		startDate: completedDays[0]!,
-		endDate: completedDays[0]!,
-		length: 1,
-	};
+	// Check if we have at least one completed day
+	if (completedDays.length > 0 && completedDays[0]) {
+		let currentStreak: Streak = {
+			startDate: completedDays[0],
+			endDate: completedDays[0],
+			length: 1,
+		};
 
-	for (let i = 1; i < completedDays.length; i++) {
-		const previousDay = completedDays[i - 1]!;
-		const currentDay = completedDays[i]!;
+		for (let i = 1; i < completedDays.length; i++) {
+			const previousDay = completedDays[i - 1];
+			const currentDay = completedDays[i];
 
-		// Find the next expected active day based on the frequency config
-		const nextExpectedDay = new Date(previousDay);
-		let foundNext = false;
-		for (let j = 0; j < 7; j++) {
-			nextExpectedDay.setDate(nextExpectedDay.getDate() + 1);
-			if (daysSet.has(nextExpectedDay.getDay())) {
-				foundNext = true;
-				break;
+			// Check if both days are defined
+			if (previousDay && currentDay) {
+				// Find the next expected active day based on the frequency config
+				const nextExpectedDay = new Date(previousDay);
+				let foundNext = false;
+				for (let j = 0; j < 7; j++) {
+					nextExpectedDay.setDate(nextExpectedDay.getDate() + 1);
+					if (daysSet.has(nextExpectedDay.getDay())) {
+						foundNext = true;
+						break;
+					}
+				}
+
+				if (
+					foundNext &&
+					nextExpectedDay.toDateString() === currentDay.toDateString()
+				) {
+					currentStreak.endDate = currentDay;
+					currentStreak.length++;
+				} else {
+					streaks.push(currentStreak);
+					currentStreak = {
+						startDate: currentDay,
+						endDate: currentDay,
+						length: 1,
+					};
+				}
 			}
 		}
-
-		if (
-			foundNext &&
-			nextExpectedDay.toDateString() === currentDay.toDateString()
-		) {
-			currentStreak.endDate = currentDay;
-			currentStreak.length++;
-		} else {
-			streaks.push(currentStreak);
-			currentStreak = { startDate: currentDay, endDate: currentDay, length: 1 };
-		}
+		streaks.push(currentStreak);
 	}
-	streaks.push(currentStreak);
 	console.log(
 		`[calculateDaysOfWeekStreaks] Final streaks: ${JSON.stringify(
 			streaks.map((s) => ({

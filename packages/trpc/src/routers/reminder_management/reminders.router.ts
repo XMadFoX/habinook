@@ -71,7 +71,7 @@ export const remindersRouter = createTRPCRouter({
 			}
 			// Parse days back to array if it exists
 			if (reminder.days && typeof reminder.days === "string") {
-				(reminder.days as any) = JSON.parse(reminder.days);
+				(reminder.days as number[]) = JSON.parse(reminder.days);
 			}
 			return reminder;
 		}),
@@ -138,7 +138,9 @@ export const remindersRouter = createTRPCRouter({
 				updatedReminder[0].days &&
 				typeof updatedReminder[0].days === "string"
 			) {
-				(updatedReminder[0].days as any) = JSON.parse(updatedReminder[0].days);
+				(updatedReminder[0].days as number[]) = JSON.parse(
+					updatedReminder[0].days,
+				);
 			}
 			return updatedReminder[0];
 		}),
