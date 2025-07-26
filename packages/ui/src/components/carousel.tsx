@@ -117,17 +117,15 @@ function Carousel({
 				canScrollNext,
 			}}
 		>
-			{/* biome-ignore lint/a11y/useAriaPropsSupportedByRole: secure */}
 			<section
 				onKeyDownCapture={handleKeyDown}
 				className={cn("relative", className)}
-				aria-roledescription="carousel"
+				aria-label="carousel"
 				data-slot="carousel"
 				{...props}
 			>
 				{children}
 			</section>
-			{/* biome-enable lint/a11y/useAriaPropsSupportedByRole */}
 		</CarouselContext.Provider>
 	);
 }
