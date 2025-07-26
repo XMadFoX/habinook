@@ -1,5 +1,6 @@
 import type { TrpcRouter } from "@habinook/trpc";
 import { QueryClient } from "@tanstack/react-query";
+import type { RegisteredRouter } from "@tanstack/react-router";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { routerWithQueryClient } from "@tanstack/react-router-with-query";
 import { createTRPCClient, httpBatchStreamLink } from "@trpc/client";
@@ -33,7 +34,11 @@ export const createRouter = () => {
 			scrollRestoration: true,
 			defaultPreloadStaleTime: 0,
 			Wrap: (props: { children: React.ReactNode }) => {
-				return <TrpcProvider>{props.children}</TrpcProvider>;
+				return (
+					<TrpcProvider router={router as RegisteredRouter}>
+						{props.children}
+					</TrpcProvider>
+				);
 			},
 		}),
 		TrpcQuery.getContext().queryClient,
