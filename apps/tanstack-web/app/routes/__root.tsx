@@ -5,6 +5,7 @@ import {
 	Scripts,
 } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+import { Header } from "../components/header";
 
 export const Route = createRootRoute({
 	head: () => ({
@@ -39,6 +40,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
 				<HeadContent />
 			</head>
 			<body className="h-full w-full flex flex-col">
+				<Header />
 				{children}
 				<Scripts />
 			</body>
