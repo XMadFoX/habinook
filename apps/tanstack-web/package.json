@@ -8,6 +8,7 @@
 		"build": "vinxi build"
 	},
 	"dependencies": {
+		"@daveyplate/better-auth-ui": "^2.1.2",
 		"@habinook/trpc": "workspace:^",
 		"@habinook/ui": "workspace:*",
 		"@tailwindcss/postcss": "^4.1.7",
@@ -20,6 +21,7 @@
 		"@trpc/server": "^11.4.1",
 		"@trpc/tanstack-react-query": "^11.4.1",
 		"autoprefixer": "^10.4.21",
+		"better-auth": "^1.2.10",
 		"postcss": "^8.5.3",
 		"react": "^19.1.0",
 		"react-dom": "^19.1.0",

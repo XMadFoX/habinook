@@ -34,11 +34,11 @@ function RootComponent() {
 
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
 	return (
-		<html lang="en">
+		<html lang="en" className="h-full relative dark">
 			<head>
 				<HeadContent />
 			</head>
-			<body>
+			<body className="h-full w-full flex flex-col">
 				{children}
 				<Scripts />
 			</body>
