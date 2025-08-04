@@ -1,51 +1,14 @@
 import { db } from "@habinook/db";
-import {
-	habitLogs,
-	habitStatusEnum,
-} from "@habinook/db/features/habit-tracking/habit_logs.schema";
+import { habitLogs } from "@habinook/db/features/habit-tracking/habit_logs.schema";
 import { habits } from "@habinook/db/features/habit-tracking/habits.schema";
 import { and, asc, desc, eq, gte, lte } from "drizzle-orm";
 import { z } from "zod";
 import { updateStreak } from "../../services/streak.service";
 import { createTRPCRouter, protectedProcedure } from "../../trpc";
-
-// Input schema for creating a habit log
-export const createHabitLogSchema = z.object({
-	habitId: z.string().uuid(),
-	targetDate: z.string().transform((str) => {
-		const date = new Date(str);
-		if (Number.isNaN(date.getTime())) {
-			throw new Error("Invalid date format");
-		}
-		return date;
-	}),
-	status: z.enum(habitStatusEnum.enumValues),
-	targetTimeSlot: z.string().optional().nullable(),
-	completedValue: z
-		.number()
-		.optional()
-		.nullable()
-		.transform((val) =>
-			val !== undefined && val !== null ? String(val) : null,
-		), // decimal expects string
-	notes: z.string().optional().nullable(),
-});
-
-// Input schema for updating a habit log
-export const updateHabitLogSchema = z.object({
-	id: z.string().uuid(),
-	targetDate: z.date().optional(),
-	status: z.enum(habitStatusEnum.enumValues).optional(),
-	targetTimeSlot: z.string().optional().nullable(),
-	completedValue: z
-		.number()
-		.optional()
-		.nullable()
-		.transform((val) =>
-			val !== undefined && val !== null ? String(val) : null,
-		),
-	notes: z.string().optional().nullable(),
-});
+import {
+	createHabitLogSchema,
+	updateHabitLogSchema,
+} from "./habit_logs.schema";
 
 export const habitLogsRouter = createTRPCRouter({
 	create: protectedProcedure

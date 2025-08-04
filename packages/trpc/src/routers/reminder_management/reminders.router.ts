@@ -4,27 +4,7 @@ import { reminders } from "@habinook/db/features/habit-tracking/reminders.schema
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../../trpc";
-
-// Input schema for creating a reminder
-export const createReminderSchema = z.object({
-	habitId: z.string().uuid(),
-	timeOfDay: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format (HH:MM)"), // HH:MM format
-	days: z.array(z.number().min(0).max(6)).optional().nullable(), // 0-6 for Sunday-Saturday
-	customMessage: z.string().optional().nullable(),
-});
-
-// Input schema for updating a reminder
-export const updateReminderSchema = z.object({
-	id: z.string().uuid(),
-	habitId: z.string().uuid().optional(),
-	timeOfDay: z
-		.string()
-		.regex(/^\d{2}:\d{2}$/, "Invalid time format (HH:MM)")
-		.optional(),
-	days: z.array(z.number().min(0).max(6)).optional().nullable(),
-	customMessage: z.string().optional().nullable(),
-	isActive: z.boolean().optional(),
-});
+import { createReminderSchema, updateReminderSchema } from "./reminders.schema";
 
 export const remindersRouter = createTRPCRouter({
 	create: protectedProcedure
@@ -71,7 +51,7 @@ export const remindersRouter = createTRPCRouter({
 			}
 			// Parse days back to array if it exists
 			if (reminder.days && typeof reminder.days === "string") {
-				(reminder.days as number[]) = JSON.parse(reminder.days);
+				(reminder.days as unknown as number[]) = JSON.parse(reminder.days);
 			}
 			return reminder;
 		}),
@@ -138,7 +118,7 @@ export const remindersRouter = createTRPCRouter({
 				updatedReminder[0].days &&
 				typeof updatedReminder[0].days === "string"
 			) {
-				(updatedReminder[0].days as number[]) = JSON.parse(
+				(updatedReminder[0].days as unknown as number[]) = JSON.parse(
 					updatedReminder[0].days,
 				);
 			}

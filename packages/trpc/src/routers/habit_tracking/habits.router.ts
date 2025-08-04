@@ -8,19 +8,7 @@ import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { updateStreak } from "../../services/streak.service";
 import { createTRPCRouter, protectedProcedure } from "../../trpc";
-
-// Input schema for creating a habit
-export const createHabitSchema = z.object({
-	name: z.string().min(1, "Habit name cannot be empty."),
-	description: z.string().optional(),
-	icon: z.string().optional(),
-	color: z.string().optional(),
-	type: z.enum(habitTypeEnum.enumValues),
-	isNegative: z.boolean().default(false),
-	why: z.string().optional(),
-	startDate: z.date(), // Expect Date object directly
-	categoryId: z.string().uuid().optional().nullable(),
-});
+import { createHabitSchema } from "./habits.schema";
 
 export const habitsRouter = createTRPCRouter({
 	create: protectedProcedure
@@ -95,7 +83,7 @@ export const habitsRouter = createTRPCRouter({
 
 	get: protectedProcedure
 		.input(z.object({ habitId: z.string().uuid() }))
-		.query(async ({ input }) => {
+		.query(async ({ input, ctx }) => {
 			const habit = await db.query.habits.findFirst({
 				where: eq(habits.id, input.habitId),
 			});

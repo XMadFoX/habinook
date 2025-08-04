@@ -3,19 +3,10 @@ import { categories } from "@habinook/db/features/habit-tracking/categories.sche
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../../trpc";
-
-// Input schema for creating a category
-export const createCategorySchema = z.object({
-	name: z.string().min(1, "Category name cannot be empty."),
-	color: z.string().optional(),
-});
-
-// Input schema for updating a category
-export const updateCategorySchema = z.object({
-	id: z.string().uuid(),
-	name: z.string().min(1, "Category name cannot be empty.").optional(),
-	color: z.string().optional(),
-});
+import {
+	createCategorySchema,
+	updateCategorySchema,
+} from "./categories.schema";
 
 export const categoriesRouter = createTRPCRouter({
 	create: protectedProcedure

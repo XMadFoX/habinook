@@ -12,6 +12,7 @@
 		"better-auth": "^1.2.10",
 		"date-fns": "^3.6.0",
 		"drizzle-orm": "^0.44.1",
+		"drizzle-zod": "^0.8.2",
 		"superjson": "^2.2.2",
 		"zod": "^3.25.67"
 	}

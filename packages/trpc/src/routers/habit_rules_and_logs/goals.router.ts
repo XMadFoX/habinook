@@ -1,44 +1,10 @@
 import { db } from "@habinook/db";
-import {
-	goals,
-	goalTypeEnum,
-} from "@habinook/db/features/habit-tracking/goals.schema";
+import { goals } from "@habinook/db/features/habit-tracking/goals.schema";
 import { habits } from "@habinook/db/features/habit-tracking/habits.schema"; // Import habits schema for joins
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../../trpc";
-
-// Input schema for creating a goal
-export const createGoalSchema = z.object({
-	habitId: z.string().uuid(),
-	type: z.enum(goalTypeEnum.enumValues),
-	value: z.coerce.string(), // Drizzle's decimal type expects a string
-	unit: z.string().optional(),
-	activeFrom: z
-		.string()
-		.datetime()
-		.transform((val) => new Date(val)), // Parse string to Date for `mode: 'date'`
-});
-
-// Input schema for updating a goal
-export const updateGoalSchema = z.object({
-	id: z.string().uuid(),
-	habitId: z.string().uuid().optional(),
-	type: z.enum(goalTypeEnum.enumValues).optional(),
-	value: z.coerce.string().optional(), // Coerce to string for decimal type
-	unit: z.string().optional(),
-	activeFrom: z
-		.string()
-		.datetime()
-		.optional()
-		.transform((val) => (val ? new Date(val) : undefined)), // Parse string to Date
-	activeUntil: z
-		.string()
-		.datetime()
-		.optional()
-		.nullable()
-		.transform((val) => (val ? new Date(val) : null)), // Parse string to Date or null
-});
+import { createGoalSchema, updateGoalSchema } from "./goals.schema";
 
 export const goalsRouter = createTRPCRouter({
 	create: protectedProcedure
