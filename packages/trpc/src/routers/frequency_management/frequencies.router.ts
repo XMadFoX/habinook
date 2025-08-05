@@ -7,7 +7,7 @@ import { createTRPCRouter, protectedProcedure } from "../../trpc";
 import {
 	createFrequencySchema,
 	updateFrequencySchema,
-} from "./frequencies.schema.ts";
+} from "./frequencies.schema";
 
 export const frequenciesRouter = createTRPCRouter({
 	create: protectedProcedure
