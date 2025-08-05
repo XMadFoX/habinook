@@ -1,5 +1,4 @@
 import { db } from "@habinook/db";
-import { frequencies } from "@habinook/db/features/habit-tracking/frequencies.schema"; // Added import
 import { habitStreaks } from "@habinook/db/features/habit-tracking/habit_streaks.schema";
 import {
 	habits,
