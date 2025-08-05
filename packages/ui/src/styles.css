@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 @source "../node_modules/@daveyplate/better-auth-ui";
 @source ".";
+@source "../../../packages/layout";
 
 @custom-variant dark (&:is(.dark *));
 
