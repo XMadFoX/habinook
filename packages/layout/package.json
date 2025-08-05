@@ -1,0 +1,7 @@
+{
+	"name": "@habinook/layout",
+	"version": "0.0.0",
+	"dependencies": {
+		"@habinook/ui": "workspace:^"
+	}
+}
