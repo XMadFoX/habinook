@@ -142,10 +142,22 @@ importers:
 
   packages/layout:
     dependencies:
+      '@habinook/db':
+        specifier: workspace:^
+        version: link:../db
+      '@habinook/trpc':
+        specifier: workspace:^
+        version: link:../trpc
       '@habinook/ui':
         specifier: workspace:^
         version: link:../ui
+      drizzle-orm:
+        specifier: ^0.44.1
+        version: 0.44.1(@types/pg@8.15.2)(bun-types@1.2.19(@types/react@18.3.23))(kysely@0.28.2)(pg@8.16.0)
     devDependencies:
+      '@trpc/server':
+        specifier: ^10.45.2
+        version: 10.45.2
       '@types/react':
         specifier: ^18.3.3
         version: 18.3.23
@@ -3510,6 +3522,9 @@ packages:
     peerDependencies:
       '@trpc/server': 11.4.1
       typescript: '>=5.7.2'
+
+  '@trpc/server@10.45.2':
+    resolution: {integrity: sha512-wOrSThNNE4HUnuhJG6PfDRp4L2009KDVxsd+2VYH8ro6o/7/jwYZ8Uu5j+VaW+mOmc8EHerHzGcdbGNQSAUPgg==}
 
   '@trpc/server@11.4.1':
     resolution: {integrity: sha512-2C7VWfOzjZUoQpQEhBTNNbyzPW429ielchJdUGPhaczWhlHH4+9M7KLIZDkxmBdx/DkDwPxdA2OX5No3TfmJkQ==}
@@ -10829,6 +10844,8 @@ snapshots:
       '@trpc/server': 11.4.1(typescript@5.8.3)
       typescript: 5.8.3
 
+  '@trpc/server@10.45.2': {}
+
   '@trpc/server@11.4.1(typescript@5.8.3)':
     dependencies:
       typescript: 5.8.3
@@ -11361,6 +11378,12 @@ snapshots:
 
   builtin-modules@3.3.0: {}
 
+  bun-types@1.2.19(@types/react@18.3.23):
+    dependencies:
+      '@types/node': 22.14.1
+      '@types/react': 18.3.23
+    optional: true
+
   bun-types@1.2.19(@types/react@19.1.5):
     dependencies:
       '@types/node': 22.14.1
@@ -11813,6 +11836,13 @@ snapshots:
       esbuild-register: 3.6.0(esbuild@0.25.4)
     transitivePeerDependencies:
       - supports-color
+
+  drizzle-orm@0.44.1(@types/pg@8.15.2)(bun-types@1.2.19(@types/react@18.3.23))(kysely@0.28.2)(pg@8.16.0):
+    optionalDependencies:
+      '@types/pg': 8.15.2
+      bun-types: 1.2.19(@types/react@18.3.23)
+      kysely: 0.28.2
+      pg: 8.16.0
 
   drizzle-orm@0.44.1(@types/pg@8.15.2)(bun-types@1.2.19(@types/react@19.1.5))(kysely@0.28.2)(pg@8.16.0):
     optionalDependencies:

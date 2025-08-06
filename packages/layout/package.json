@@ -2,11 +2,15 @@
 	"name": "@habinook/layout",
 	"version": "0.0.0",
 	"dependencies": {
-		"@habinook/ui": "workspace:^"
+		"@habinook/ui": "workspace:^",
+		"@habinook/trpc": "workspace:^",
+		"@habinook/db": "workspace:^",
+		"drizzle-orm": "^0.44.1"
 	},
 	"devDependencies": {
 		"react": "^18.3.1",
 		"@types/react": "^18.3.3",
-		"date-fns": "^3.6.0"
+		"date-fns": "^3.6.0",
+		"@trpc/server": "^10.45.2"
 	}
 }

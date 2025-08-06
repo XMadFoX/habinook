@@ -1,3 +1,6 @@
+import type { frequencies } from "@habinook/db/features/habit-tracking/frequencies.schema";
+import type { habitLogs } from "@habinook/db/features/habit-tracking/habit_logs.schema";
+import type { habits } from "@habinook/db/features/habit-tracking/habits.schema";
 import {
 	Accordion,
 	AccordionContent,
@@ -17,71 +20,15 @@ import {
 } from "@habinook/ui/components/card";
 import { Progress } from "@habinook/ui/components/progress";
 import { format } from "date-fns";
+import type { InferSelectModel } from "drizzle-orm";
 
-// TODO: infer
-// Interface for period units - copied from index.tsx as it's needed for Frequency type
-export type Period = "day" | "week" | "month" | "year";
-
-// Base configuration for all frequency types - copied from index.tsx
-export interface BaseFrequencyConfig {
-	times?: string[];
-	completionToleranceMinutes?: number;
-	timezoneId?: string;
-}
-
-// Specific frequency configs - copied from index.tsx
-export interface DailyConfig extends BaseFrequencyConfig {}
-export interface DaysOfWeekConfig extends BaseFrequencyConfig {
-	days: number[];
-}
-export interface TimesPerPeriodConfig extends BaseFrequencyConfig {
-	count: number;
-	period: Period;
-}
-export interface EveryXPeriodConfig extends BaseFrequencyConfig {
-	interval: number;
-	period: Period;
-}
-
-// Union type for all frequency configurations - copied from index.tsx
-export type FrequencyConfig =
-	| DailyConfig
-	| DaysOfWeekConfig
-	| TimesPerPeriodConfig
-	| EveryXPeriodConfig;
-
-// Main Frequency type matching backend schema - copied from index.tsx
-export type Frequency = {
-	id: string;
-	habitId: string;
-	type: "daily" | "days_of_week" | "times_per_period" | "every_x_period";
-	config: FrequencyConfig;
-	activeFrom: Date;
-	activeUntil: Date | null;
-};
-
-// Habit type - copied from index.tsx
-export type Habit = {
-	id: string;
-	name: string;
-	description: string | null;
-	type: "yes_no" | "measurable" | "timed";
-	isNegative: boolean;
-	color: string | null;
-	icon: string | null;
-	startDate: Date;
+export type Frequency = InferSelectModel<typeof frequencies>;
+export type Habit = InferSelectModel<typeof habits> & {
 	currentStreak?: number;
 	longestStreak?: number;
 	frequencies: Frequency[] | null;
 };
-
-export type HabitLog = {
-	id: string;
-	habitId: string;
-	targetDate: string;
-	status: "completed" | "skipped" | "missed" | "partial_completed";
-	loggedAt: string;
-};
+export type HabitLog = InferSelectModel<typeof habitLogs>;
 
 interface TodayScreenProps {
 	now: Date;
