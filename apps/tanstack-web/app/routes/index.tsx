@@ -1,16 +1,11 @@
-import {
-	BaseFrequencyConfig,
-	DailyConfig,
-	type DaysOfWeekConfig,
-	type EveryXPeriodConfig,
-	type Frequency,
-	FrequencyConfig,
-	Habit,
-	type HabitLog,
-	Period,
-	type TimesPerPeriodConfig,
-	TodayScreen as TodayScreenUI,
-} from "@habinook/layout/src/today-screen";
+import { TodayScreen as TodayScreenUI } from "@habinook/layout/src/screens/today";
+import type {
+	DaysOfWeekConfig,
+	EveryXPeriodConfig,
+	Frequency,
+	HabitLog,
+	TimesPerPeriodConfig,
+} from "@habinook/layout/src/screens/today/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { endOfDay, getDay, isAfter, isBefore, startOfDay } from "date-fns";
@@ -34,10 +29,7 @@ function Index() {
 	const start = startOfDay(now);
 	const end = endOfDay(now);
 
-	type LogRow = {
-		habitId: string;
-		status: HabitLog["status"];
-	};
+	type LogRow = Pick<HabitLog, "habitId" | "status">;
 
 	const { data: todaysLogs } = useQuery({
 		...trpc.habitLogs.getAllForDateRange.queryOptions({
