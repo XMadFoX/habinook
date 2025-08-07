@@ -9,13 +9,14 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@habinook/ui/components/card";
-import type { Frequency, Habit } from "./types";
+import type { Frequency, Habit, TimeInstance } from "./types";
 
 interface DueHabitCardProps {
 	habit: Habit;
 	formatFrequency: (freq: Frequency) => string;
-	completeHabit: (habitId: string) => void;
-	skipHabit: (habitId: string) => void;
+	completeHabit: (habitId: string, targetTimeSlot?: string) => void;
+	skipHabit: (habitId: string, targetTimeSlot?: string) => void;
+	timeInstances?: TimeInstance[];
 }
 
 export function DueHabitCard({
@@ -23,8 +24,10 @@ export function DueHabitCard({
 	formatFrequency,
 	completeHabit,
 	skipHabit,
+	timeInstances,
 }: DueHabitCardProps) {
 	const freqs = habit.frequencies ?? [];
+	const hasTimedSlots = (timeInstances?.length ?? 0) > 0;
 	return (
 		<Card key={habit.id}>
 			<CardHeader>
@@ -51,12 +54,67 @@ export function DueHabitCard({
 					<p className="text-sm text-muted-foreground">{habit.description}</p>
 				</CardContent>
 			) : null}
-			<CardFooter className="gap-2 justify-end">
-				<Button variant="outline" onClick={() => skipHabit(habit.id)}>
-					Skip
-				</Button>
-				<Button onClick={() => completeHabit(habit.id)}>Complete</Button>
-			</CardFooter>
+			{hasTimedSlots ? (
+				<CardContent className="grid gap-2">
+					{timeInstances!.map((ti) => {
+						const isCompleted = ti.status === "completed";
+						const isSkipped = ti.status === "skipped";
+						const disabled = isCompleted || isSkipped;
+						return (
+							<div
+								key={ti.time}
+								className="group flex items-center justify-between rounded-lg border p-2 transition-colors hover:bg-muted/40"
+							>
+								<div className="flex items-center gap-2">
+									<Button asChild size="sm">
+										<Badge
+											className=""
+											variant={
+												isCompleted
+													? "secondary"
+													: isSkipped
+														? "outline"
+														: "default"
+											}
+										>
+											{ti.time}
+										</Badge>
+									</Button>
+									{isCompleted ? <Badge>Done</Badge> : null}
+									{isSkipped ? <Badge variant="outline">Skipped</Badge> : null}
+								</div>
+								<div className="flex items-center gap-2">
+									<Button
+										variant="outline"
+										size="sm"
+										className="opacity-90 group-hover:opacity-100"
+										disabled={disabled}
+										onClick={() => skipHabit(habit.id, ti.time)}
+									>
+										Skip
+									</Button>
+									<Button
+										size="sm"
+										className="opacity-90 group-hover:opacity-100"
+										disabled={disabled}
+										onClick={() => completeHabit(habit.id, ti.time)}
+									>
+										Complete
+									</Button>
+								</div>
+							</div>
+						);
+					})}
+				</CardContent>
+			) : null}
+			{!hasTimedSlots ? (
+				<CardFooter className="gap-2 justify-end">
+					<Button variant="outline" onClick={() => skipHabit(habit.id)}>
+						Skip
+					</Button>
+					<Button onClick={() => completeHabit(habit.id)}>Complete</Button>
+				</CardFooter>
+			) : null}
 		</Card>
 	);
 }

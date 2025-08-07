@@ -15,6 +15,7 @@ export function TodayScreen({
 	formatFrequency,
 	completeHabit,
 	skipHabit,
+	timeInstancesByHabit,
 }: TodayScreenProps) {
 	return (
 		<div className="mx-auto w-full max-w-4xl p-6 space-y-6">
@@ -30,6 +31,7 @@ export function TodayScreen({
 				formatFrequency={formatFrequency}
 				completeHabit={completeHabit}
 				skipHabit={skipHabit}
+				timeInstancesByHabit={timeInstancesByHabit}
 			/>
 			<CompletedSkippedSection
 				completedToday={completedToday}

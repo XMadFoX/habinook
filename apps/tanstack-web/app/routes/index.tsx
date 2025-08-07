@@ -3,6 +3,7 @@ import type {
 	DaysOfWeekConfig,
 	EveryXPeriodConfig,
 	Frequency,
+	Habit,
 	HabitLog,
 	TimesPerPeriodConfig,
 } from "@habinook/layout/src/screens/today/types";
@@ -29,7 +30,13 @@ function Index() {
 	const start = startOfDay(now);
 	const end = endOfDay(now);
 
-	type LogRow = Pick<HabitLog, "habitId" | "status">;
+	type LogRow = Pick<HabitLog, "habitId" | "status" | "targetTimeSlot">;
+
+	// Helper for timezone fallback
+	const resolveTz = (freq: Frequency) => {
+		const cfg = (freq.config as any) ?? {};
+		return cfg.timezoneId || Intl.DateTimeFormat().resolvedOptions().timeZone;
+	};
 
 	const { data: todaysLogs } = useQuery({
 		...trpc.habitLogs.getAllForDateRange.queryOptions({
@@ -55,20 +62,22 @@ function Index() {
 
 	const user = useSession();
 
-	const completeHabit = (habitId: string) => {
+	const completeHabit = (habitId: string, targetTimeSlot?: string) => {
 		return createLog.mutate({
 			userId: user.data?.user.id ?? "1",
 			habitId,
 			targetDate: new Date(),
+			targetTimeSlot,
 			status: "completed",
 		});
 	};
 
-	const skipHabit = (habitId: string) => {
+	const skipHabit = (habitId: string, targetTimeSlot?: string) => {
 		return createLog.mutate({
 			userId: user.data?.user.id ?? "1",
 			habitId,
 			targetDate: new Date(),
+			targetTimeSlot,
 			status: "skipped",
 		});
 	};
@@ -158,20 +167,79 @@ function Index() {
 		return map;
 	}, [todaysLogs]);
 
+	// Build per-time-slot instances grouped by habit
+	type TimeInstance = {
+		habitId: string;
+		time: string; // "HH:MM"
+		status: "completed" | "skipped" | "pending";
+	};
+	const timeInstancesByHabit = useMemo(() => {
+		const byHabit = new Map<string, TimeInstance[]>();
+		if (!habits) return byHabit;
+
+		for (const h of habits) {
+			const freqs = h.frequencies ?? [];
+			const todayRelevantFreqs = freqs.filter((f) =>
+				isDueTodayByFrequency(f, now),
+			);
+			const timesSet = new Set<string>();
+			for (const f of todayRelevantFreqs) {
+				const cfg: any = f.config ?? {};
+				const times: string[] = Array.isArray(cfg.times) ? cfg.times : [];
+				for (const t of times) {
+					timesSet.add(t);
+				}
+			}
+			if (timesSet.size === 0) continue;
+
+			const todayLogs = logsByHabitId.get(h.id) ?? [];
+			const slotStatus = new Map<string, "completed" | "skipped">();
+			for (const log of todayLogs) {
+				if (!log.targetTimeSlot) continue;
+				if (log.status === "completed" || log.status === "skipped") {
+					// keep the first terminal status per slot
+					if (!slotStatus.has(log.targetTimeSlot)) {
+						slotStatus.set(log.targetTimeSlot, log.status);
+					}
+				}
+			}
+
+			const arr: TimeInstance[] = [];
+			for (const t of Array.from(timesSet).sort()) {
+				const st = slotStatus.get(t) ?? "pending";
+				arr.push({ habitId: h.id, time: t, status: st });
+			}
+			if (arr.length) {
+				byHabit.set(h.id, arr);
+			}
+		}
+		return byHabit;
+	}, [habits, logsByHabitId, now, isDueTodayByFrequency]);
+
+	// A habit is due today if it has any frequency active today AND
+	// - it has time slots: at least one pending slot remains
+	// - or it is untimed and has no terminal log
 	const dueToday = useMemo(() => {
 		if (!habits) return [];
 		return habits.filter((h) => {
+			const freqs = h.frequencies ?? [];
+			if (!freqs.length) return false;
+			const anyActive = freqs.some((f) => isDueTodayByFrequency(f, now));
+			if (!anyActive) return false;
+
+			const timedSlots = timeInstancesByHabit.get(h.id) ?? [];
+			if (timedSlots.length > 0) {
+				return timedSlots.some((s) => s.status === "pending");
+			}
+
+			// Untimed fallback: original behavior
 			const todayLogs = logsByHabitId.get(h.id) ?? [];
 			const hasTerminalStatus = todayLogs.some(
 				(l) => l.status === "completed" || l.status === "skipped",
 			);
-			if (hasTerminalStatus) return false;
-
-			const freqs = h.frequencies ?? [];
-			if (!freqs.length) return false;
-			return freqs.some((f) => isDueTodayByFrequency(f, now));
+			return !hasTerminalStatus;
 		});
-	}, [habits, logsByHabitId, now, isDueTodayByFrequency]);
+	}, [habits, logsByHabitId, now, isDueTodayByFrequency, timeInstancesByHabit]);
 
 	const completedToday = useMemo(() => {
 		if (!habits) return [];
@@ -210,6 +278,7 @@ function Index() {
 			formatFrequency={formatFrequency}
 			completeHabit={completeHabit}
 			skipHabit={skipHabit}
+			timeInstancesByHabit={timeInstancesByHabit}
 		/>
 	);
 }

@@ -21,6 +21,11 @@ export type {
 	TimesPerPeriodConfig,
 } from "@habinook/db/features/habit-tracking/frequencies.schema";
 
+export interface TimeInstance {
+	habitId: string;
+	time: string; // "HH:MM"
+	status: "completed" | "skipped" | "pending";
+}
 export interface TodayScreenProps {
 	now: Date;
 	loadingHabits: boolean;
@@ -31,6 +36,8 @@ export interface TodayScreenProps {
 	doneCount: number;
 	progress: number;
 	formatFrequency: (freq: Frequency) => string;
-	completeHabit: (habitId: string) => void;
-	skipHabit: (habitId: string) => void;
+	completeHabit: (habitId: string, targetTimeSlot?: string) => void;
+	skipHabit: (habitId: string, targetTimeSlot?: string) => void;
+	// Optional map of per-time-slot instances by habit id
+	timeInstancesByHabit?: Map<string, TimeInstance[]>;
 }

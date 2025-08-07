@@ -8,14 +8,15 @@ import {
 	CardTitle,
 } from "@habinook/ui/components/card";
 import { DueHabitCard } from "./due-habit-card";
-import type { Frequency, Habit } from "./types";
+import type { Frequency, Habit, TimeInstance } from "./types";
 
 interface DueTodaySectionProps {
 	loadingHabits: boolean;
 	dueToday: Habit[];
 	formatFrequency: (freq: Frequency) => string;
-	completeHabit: (habitId: string) => void;
-	skipHabit: (habitId: string) => void;
+	completeHabit: (habitId: string, targetTimeSlot?: string) => void;
+	skipHabit: (habitId: string, targetTimeSlot?: string) => void;
+	timeInstancesByHabit?: Map<string, TimeInstance[]>;
 }
 
 export function DueTodaySection({
@@ -24,6 +25,7 @@ export function DueTodaySection({
 	formatFrequency,
 	completeHabit,
 	skipHabit,
+	timeInstancesByHabit,
 }: DueTodaySectionProps) {
 	return (
 		<section className="space-y-4">
@@ -58,15 +60,30 @@ export function DueTodaySection({
 				</Card>
 			) : (
 				<div className="grid gap-4">
-					{dueToday.map((habit) => (
-						<DueHabitCard
-							key={habit.id}
-							habit={habit}
-							formatFrequency={formatFrequency}
-							completeHabit={completeHabit}
-							skipHabit={skipHabit}
-						/>
-					))}
+					{dueToday.map((habit) => {
+						const instances = timeInstancesByHabit?.get(habit.id);
+						const pendingCount =
+							instances?.filter((i) => i.status === "pending").length ?? 0;
+						return (
+							<div key={habit.id} className="space-y-2">
+								{instances && instances.length > 0 ? (
+									<div className="flex items-center justify-between px-1">
+										<span className="text-xs text-muted-foreground">
+											{pendingCount} {pendingCount === 1 ? "time" : "times"}{" "}
+											remaining today
+										</span>
+									</div>
+								) : null}
+								<DueHabitCard
+									habit={habit}
+									formatFrequency={formatFrequency}
+									completeHabit={completeHabit}
+									skipHabit={skipHabit}
+									timeInstances={instances}
+								/>
+							</div>
+						);
+					})}
 				</div>
 			)}
 		</section>
