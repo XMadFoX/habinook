@@ -54,9 +54,9 @@ export function DueHabitCard({
 					<p className="text-sm text-muted-foreground">{habit.description}</p>
 				</CardContent>
 			) : null}
-			{hasTimedSlots ? (
+			{hasTimedSlots && timeInstances ? (
 				<CardContent className="grid gap-2">
-					{timeInstances!.map((ti) => {
+					{timeInstances.map((ti) => {
 						const isCompleted = ti.status === "completed";
 						const isSkipped = ti.status === "skipped";
 						const disabled = isCompleted || isSkipped;
@@ -68,7 +68,7 @@ export function DueHabitCard({
 								<div className="flex items-center gap-2">
 									<Button asChild size="sm">
 										<Badge
-											className=""
+											className="h-8 px-3 rounded-full text-sm flex items-center"
 											variant={
 												isCompleted
 													? "secondary"

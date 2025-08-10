@@ -8,6 +8,8 @@
 		"build": "vinxi build"
 	},
 	"dependencies": {
+		"@date-fns/tz": "^1.2.0",
+		"@date-fns/utc": "^2.1.1",
 		"@daveyplate/better-auth-ui": "^2.1.2",
 		"@habinook/layout": "workspace:^",
 		"@habinook/trpc": "workspace:^",
@@ -25,6 +27,7 @@
 		"autoprefixer": "^10.4.21",
 		"better-auth": "^1.2.10",
 		"date-fns": "^4.1.0",
+		"date-fns-tz": "^3.2.0",
 		"postcss": "^8.5.3",
 		"react": "^19.1.0",
 		"react-dom": "^19.1.0",

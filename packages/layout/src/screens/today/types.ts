@@ -25,6 +25,8 @@ export interface TimeInstance {
 	habitId: string;
 	time: string; // "HH:MM"
 	status: "completed" | "skipped" | "pending";
+	// UI state relative to now (computed on the client): "past" | "now" | "upcoming"
+	state?: "past" | "now" | "upcoming";
 }
 export interface TodayScreenProps {
 	now: Date;

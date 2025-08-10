@@ -6,16 +6,18 @@ import {
 } from "@habinook/ui/components/accordion";
 import { Badge } from "@habinook/ui/components/badge";
 import { LoggedHabitCard } from "./logged-habit-card";
-import type { Habit } from "./types";
+import type { Habit, TimeInstance } from "./types";
 
 interface CompletedSkippedSectionProps {
 	completedToday: Habit[];
 	skippedToday: Habit[];
+	timeInstancesByHabit?: Map<string, TimeInstance[]>;
 }
 
 export function CompletedSkippedSection({
 	completedToday,
 	skippedToday,
+	timeInstancesByHabit,
 }: CompletedSkippedSectionProps) {
 	return (
 		<section className="space-y-2">
@@ -41,6 +43,7 @@ export function CompletedSkippedSection({
 										key={habit.id}
 										habit={habit}
 										status="completed"
+										timeInstances={timeInstancesByHabit?.get(habit.id)}
 									/>
 								))}
 							</div>
@@ -69,6 +72,7 @@ export function CompletedSkippedSection({
 										key={habit.id}
 										habit={habit}
 										status="skipped"
+										timeInstances={timeInstancesByHabit?.get(habit.id)}
 									/>
 								))}
 							</div>

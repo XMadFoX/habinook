@@ -1,15 +1,25 @@
+import { TZDate } from "@date-fns/tz";
 import { TodayScreen as TodayScreenUI } from "@habinook/layout/src/screens/today";
 import type {
 	DaysOfWeekConfig,
 	EveryXPeriodConfig,
 	Frequency,
-	Habit,
 	HabitLog,
 	TimesPerPeriodConfig,
 } from "@habinook/layout/src/screens/today/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { endOfDay, getDay, isAfter, isBefore, startOfDay } from "date-fns";
+import {
+	addMinutes,
+	endOfDay,
+	format,
+	getDay,
+	isAfter,
+	isBefore,
+	isWithinInterval,
+	startOfDay,
+	subMinutes,
+} from "date-fns";
 import { useCallback, useMemo } from "react";
 import { useSession } from "../lib/auth";
 import { useTRPC } from "../trpc";
@@ -27,21 +37,23 @@ function Index() {
 	});
 
 	const now = new Date();
-	const start = startOfDay(now);
-	const end = endOfDay(now);
+	const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+	const todayInTimezone = new TZDate(now.getTime(), timezone);
+	const start = startOfDay(todayInTimezone);
+	const end = endOfDay(todayInTimezone);
 
 	type LogRow = Pick<HabitLog, "habitId" | "status" | "targetTimeSlot">;
 
-	// Helper for timezone fallback
-	const resolveTz = (freq: Frequency) => {
-		const cfg = (freq.config as any) ?? {};
-		return cfg.timezoneId || Intl.DateTimeFormat().resolvedOptions().timeZone;
-	};
+	// timezone helper removed (was unused) — timezone is resolved per-frequency where required
 
 	const { data: todaysLogs } = useQuery({
 		...trpc.habitLogs.getAllForDateRange.queryOptions({
-			startDate: start,
-			endDate: end,
+			startDate: new Date(
+				Date.UTC(start.getFullYear(), start.getMonth(), start.getDate()),
+			),
+			endDate: new Date(
+				Date.UTC(end.getFullYear(), end.getMonth(), end.getDate()),
+			),
 		}),
 	});
 
@@ -66,7 +78,13 @@ function Index() {
 		return createLog.mutate({
 			userId: user.data?.user.id ?? "1",
 			habitId,
-			targetDate: new Date(),
+			targetDate: new Date(
+				Date.UTC(
+					todayInTimezone.getFullYear(),
+					todayInTimezone.getMonth(),
+					todayInTimezone.getDate(),
+				),
+			),
 			targetTimeSlot,
 			status: "completed",
 		});
@@ -76,7 +94,13 @@ function Index() {
 		return createLog.mutate({
 			userId: user.data?.user.id ?? "1",
 			habitId,
-			targetDate: new Date(),
+			targetDate: new Date(
+				Date.UTC(
+					todayInTimezone.getFullYear(),
+					todayInTimezone.getMonth(),
+					todayInTimezone.getDate(),
+				),
+			),
 			targetTimeSlot,
 			status: "skipped",
 		});
@@ -172,6 +196,7 @@ function Index() {
 		habitId: string;
 		time: string; // "HH:MM"
 		status: "completed" | "skipped" | "pending";
+		state?: "past" | "now" | "upcoming";
 	};
 	const timeInstancesByHabit = useMemo(() => {
 		const byHabit = new Map<string, TimeInstance[]>();
@@ -182,15 +207,16 @@ function Index() {
 			const todayRelevantFreqs = freqs.filter((f) =>
 				isDueTodayByFrequency(f, now),
 			);
-			const timesSet = new Set<string>();
+			// collect unique times and keep the originating freq/config to compute timezone/tolerance
+			const timesMap = new Map<string, { freq: Frequency; cfg: any }>();
 			for (const f of todayRelevantFreqs) {
 				const cfg: any = f.config ?? {};
 				const times: string[] = Array.isArray(cfg.times) ? cfg.times : [];
 				for (const t of times) {
-					timesSet.add(t);
+					if (!timesMap.has(t)) timesMap.set(t, { freq: f, cfg });
 				}
 			}
-			if (timesSet.size === 0) continue;
+			if (timesMap.size === 0) continue;
 
 			const todayLogs = logsByHabitId.get(h.id) ?? [];
 			const slotStatus = new Map<string, "completed" | "skipped">();
@@ -205,9 +231,45 @@ function Index() {
 			}
 
 			const arr: TimeInstance[] = [];
-			for (const t of Array.from(timesSet).sort()) {
+			for (const t of Array.from(timesMap.keys()).sort()) {
+				const { cfg } = timesMap.get(t)!;
 				const st = slotStatus.get(t) ?? "pending";
-				arr.push({ habitId: h.id, time: t, status: st });
+
+				// Determine timezone-aware state for UI (past / now / upcoming)
+				const tz =
+					(cfg?.timezoneId as string) ??
+					Intl.DateTimeFormat().resolvedOptions().timeZone;
+				const tolerance = (cfg?.completionToleranceMinutes as number) ?? 30;
+
+				// Use the zoned date for 'today' in the target timezone
+				const dateStr = format(new TZDate(now.getTime(), tz), "yyyy-MM-dd");
+
+				let scheduledUtc: Date;
+				try {
+					// construct an ISO-like string and convert from zoned to UTC
+					// scheduledUtc = dfstz.zonedTimeToUtc(`${dateStr}T${t}:00`, tz);
+					scheduledUtc = new TZDate(`${dateStr}T${t}:00`, tz);
+				} catch (_e) {
+					// fallback to browser timezone if parse/conversion fails
+					scheduledUtc = new TZDate(
+						`${dateStr}T${t}:00`,
+						Intl.DateTimeFormat().resolvedOptions().timeZone,
+					);
+				}
+
+				const lower = subMinutes(scheduledUtc, tolerance);
+				const upper = addMinutes(scheduledUtc, tolerance);
+
+				let state: "past" | "now" | "upcoming" = "upcoming";
+				if (isWithinInterval(now, { start: lower, end: upper })) {
+					state = "now";
+				} else if (isAfter(now, upper)) {
+					state = "past";
+				} else {
+					state = "upcoming";
+				}
+
+				arr.push({ habitId: h.id, time: t, status: st, state });
 			}
 			if (arr.length) {
 				byHabit.set(h.id, arr);

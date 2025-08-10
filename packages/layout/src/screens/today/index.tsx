@@ -36,6 +36,7 @@ export function TodayScreen({
 			<CompletedSkippedSection
 				completedToday={completedToday}
 				skippedToday={skippedToday}
+				timeInstancesByHabit={timeInstancesByHabit}
 			/>
 		</div>
 	);
