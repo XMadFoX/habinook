@@ -112,10 +112,11 @@ export const habitsRouter = createTRPCRouter({
 				habitStreaks: {
 					orderBy: desc(habitStreaks.endDate),
 				},
+				frequencies: true,
 			},
 		});
 
-		// Map the data to include current and longest streak
+		// Map the data to include current and longest streak and frequencies
 		return habitsWithStreaks.map((h) => {
 			const longestStreak = h.habitStreaks.reduce(
 				(max, s) => Math.max(max, s.length),
@@ -128,6 +129,7 @@ export const habitsRouter = createTRPCRouter({
 				...h,
 				currentStreak,
 				longestStreak,
+				frequencies: h.frequencies,
 			};
 		});
 	}),
