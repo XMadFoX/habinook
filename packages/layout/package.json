@@ -2,15 +2,19 @@
 	"name": "@habinook/layout",
 	"version": "0.0.0",
 	"dependencies": {
-		"@habinook/ui": "workspace:^",
-		"@habinook/trpc": "workspace:^",
 		"@habinook/db": "workspace:^",
-		"drizzle-orm": "^0.44.1"
+		"@habinook/trpc": "workspace:^",
+		"@habinook/ui": "workspace:^",
+		"@hookform/resolvers": "^3.9.0",
+		"@tanstack/react-form": "^1.19.2",
+		"drizzle-orm": "^0.44.1",
+		"react-hook-form": "^7.53.0",
+		"zod": "^3.25.67"
 	},
 	"devDependencies": {
-		"react": "^18.3.1",
-		"@types/react": "^18.3.3",
+		"@trpc/server": "^10.45.2",
+		"@types/react": "^19.0.0",
 		"date-fns": "^3.6.0",
-		"@trpc/server": "^10.45.2"
+		"react": "^19.1.0"
 	}
 }
