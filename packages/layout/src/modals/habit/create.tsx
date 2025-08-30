@@ -1,3 +1,15 @@
+// TODO: refactor & improvements
+// useful: https://tanstack.com/form/latest/docs/framework/react/guides/form-composition
+// - [ ] custom fields to use in the children props
+// - [ ] define fields as an array & map
+// - [ ] color picker
+// - [ ] icon picker
+// - [ ] category picker
+// - [ ] better time selector?
+
+// TODO:: remove after refactor
+// biome-ignore-all lint/correctness/noChildrenProp: temporary, will be refactored
+
 import { Button } from "@habinook/ui/components/button";
 import { Checkbox } from "@habinook/ui/components/checkbox";
 import {
