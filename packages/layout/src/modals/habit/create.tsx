@@ -95,8 +95,6 @@ const formSchema = z.object({
 	frequency: frequencyFormSchema,
 });
 
-type FormValues = z.infer<typeof formSchema>;
-
 export interface CreateHabitModalProps {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
@@ -505,9 +503,9 @@ export function CreateHabitModal(props: CreateHabitModalProps) {
 												No times added
 											</p>
 										) : null}
-										{field.state.value?.map((_, idx) => (
+										{field.state.value?.map((v, idx) => (
 											<form.AppField
-												key={idx}
+												key={`${idx}-${v}`}
 												mode="array"
 												name={`frequency.config.times[${idx}]`}
 												children={(scheduleField) => (
@@ -551,7 +549,7 @@ export function CreateHabitModal(props: CreateHabitModalProps) {
 												const checked = arr.includes(idx);
 												return (
 													<div
-														key={idx}
+														key={`${idx}-${label}`}
 														className="flex flex-col items-center gap-1"
 													>
 														<Checkbox
