@@ -22,10 +22,13 @@ const navigationLinks = [
 	{ href: "/progress", label: "Progress" },
 ];
 
+import type { PropsWithChildren, ReactNode } from "react";
+
 export default function Navbar({
 	user,
 	onSignOut,
-}: {
+	createHabitComponent,
+}: PropsWithChildren<{
 	user: {
 		id: string;
 		name: string;
@@ -36,7 +39,8 @@ export default function Navbar({
 		image?: string | null | undefined;
 	};
 	onSignOut: () => void;
-}) {
+	createHabitComponent?: ReactNode;
+}>) {
 	return (
 		<header className="border-b px-4 md:px-6">
 			<div className="flex h-16 items-center justify-between gap-4">
@@ -97,6 +101,7 @@ export default function Navbar({
 				</div>
 				{/* Right side */}
 				<div className="flex items-center gap-2">
+					{createHabitComponent}
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<Button variant="ghost" className="relative h-8 w-8 rounded-full">

@@ -1,6 +1,7 @@
 import Navbar from "@habinook/ui/components/navbar";
 import { Link } from "@tanstack/react-router";
 import { signOut, useSession } from "../lib/auth";
+import { CreateHabitButton } from "./create-habit-button";
 
 export function Header() {
 	const session = useSession();
@@ -8,7 +9,11 @@ export function Header() {
 	return (
 		<header className="px-4 md:px-6">
 			{session.data?.user ? (
-				<Navbar user={session.data.user} onSignOut={() => signOut()} />
+				<Navbar
+					user={session.data.user}
+					onSignOut={() => signOut()}
+					createHabitComponent={<CreateHabitButton />}
+				/>
 			) : (
 				<div className="flex h-16 items-center justify-end gap-4">
 					<Link
