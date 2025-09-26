@@ -8,6 +8,7 @@
 		"build": "vite build"
 	},
 	"dependencies": {
+		"@cloudflare/vite-plugin": "^1.13.7",
 		"@date-fns/tz": "^1.2.0",
 		"@date-fns/utc": "^2.1.1",
 		"@daveyplate/better-auth-ui": "^2.1.2",
