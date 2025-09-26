@@ -32,49 +32,29 @@ import { useAppForm } from "@habinook/ui/components/tanstack-form";
 import { Textarea } from "@habinook/ui/components/textarea";
 import { useCallback, useMemo, useState } from "react";
 import { z } from "zod";
+import { createHabitSchema } from "../../../../trpc/src/routers/habit_tracking/habits.schema";
+import { habitTypeEnum } from "@habinook/db/features/habit-tracking/habits.schema";
+import {
+	dailyConfigSchema,
+	daysOfWeekConfigSchema,
+	everyXPeriodConfigSchema,
+	timesPerPeriodConfigSchema,
+} from "../../../../trpc/src/routers/frequency_management/frequencies.schema";
 
 // Local client-only enum values mirroring server (@habinook/db habit_type)
-const habitTypeValues = ["yes_no", "measurable", "timed"] as const;
+const habitTypeValues: Readonly<typeof habitTypeEnum.enumValues> =
+	habitTypeEnum.enumValues;
 
 // Habit schema (client-side fallback mirroring server shape)
-const createHabitSchema = z.object({
-	name: z.string().min(1, "Habit name cannot be empty."),
-	description: z.string().optional(),
-	icon: z.string().optional(),
-	color: z.string().optional(),
-	type: z.enum(habitTypeValues),
-	isNegative: z.boolean().default(false),
-	why: z.string().optional(),
+const createHabitFormSchema = createHabitSchema.extend({
 	startDate: z.preprocess((v) => {
 		if (v instanceof Date) return v;
 		if (typeof v === "string" && v) return new Date(v);
 		return v as unknown;
 	}, z.date()),
-	categoryId: z.string().uuid().optional().nullable(),
 });
 
 // Frequency schemas (client-side fallback, omitting habitId)
-const baseFrequencyConfigSchema = z.object({
-	times: z.array(z.string().regex(/^\d{2}:\d{2}$/)).optional(), // HH:MM
-	completionToleranceMinutes: z.number().int().min(0).optional(),
-	timezoneId: z.string().optional(),
-});
-
-const dailyConfigSchema = baseFrequencyConfigSchema;
-
-const daysOfWeekConfigSchema = baseFrequencyConfigSchema.extend({
-	days: z.array(z.number().int().min(0).max(6)),
-});
-
-const timesPerPeriodConfigSchema = baseFrequencyConfigSchema.extend({
-	count: z.number().int().min(1),
-	period: z.enum(["day", "week", "month", "year"]),
-});
-
-const everyXPeriodConfigSchema = baseFrequencyConfigSchema.extend({
-	interval: z.number().int().min(1),
-	period: z.enum(["day", "week", "month", "year"]),
-});
 
 const frequencyFormSchema = z.discriminatedUnion("type", [
 	z.object({
@@ -99,11 +79,11 @@ const frequencyFormSchema = z.discriminatedUnion("type", [
 	}),
 ]);
 
-export type HabitInput = z.infer<typeof createHabitSchema>;
+export type HabitInput = z.infer<typeof createHabitFormSchema>;
 export type FrequencyInput = z.infer<typeof frequencyFormSchema>;
 
 const formSchema = z.object({
-	habit: createHabitSchema,
+	habit: createHabitFormSchema,
 	frequency: frequencyFormSchema,
 });
 
