@@ -4,12 +4,11 @@ import type {
 } from "@habinook/layout/src/modals/habit/create";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { useTRPC } from "../trpc";
+import { trpc } from "../trpc";
 
 export function useCreateHabit() {
 	const [open, setOpen] = useState(false);
 
-	const trpc = useTRPC();
 	const queryClient = useQueryClient();
 
 	const createHabitMutation = useMutation({
