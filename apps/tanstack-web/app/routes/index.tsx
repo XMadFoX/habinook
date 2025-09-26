@@ -22,14 +22,13 @@ import {
 } from "date-fns";
 import { useCallback, useMemo } from "react";
 import { useSession } from "../lib/auth";
-import { useTRPC } from "../trpc";
+import { trpc } from "../trpc";
 
 export const Route = createFileRoute("/")({
 	component: Index,
 });
 
 function Index() {
-	const trpc = useTRPC();
 	const qc = useQueryClient();
 
 	const { data: habits, isLoading: loadingHabits } = useQuery({

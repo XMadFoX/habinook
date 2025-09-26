@@ -1,11 +1,15 @@
 import { auth } from "@habinook/trpc/src/auth";
-import { createAPIFileRoute } from "@tanstack/react-start/api";
+import { createFileRoute } from "@tanstack/react-router";
 
-export const APIRoute = createAPIFileRoute("/api/auth/$")({
-	GET: ({ request }) => {
-		return auth.handler(request);
-	},
-	POST: ({ request }) => {
-		return auth.handler(request);
+export const Route = createFileRoute("/api/auth/$")({
+	server: {
+		handlers: {
+			GET: ({ request }) => {
+				return auth.handler(request);
+			},
+			POST: ({ request }) => {
+				return auth.handler(request);
+			},
+		},
 	},
 });

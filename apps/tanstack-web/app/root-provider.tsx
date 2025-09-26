@@ -4,7 +4,6 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import type { RegisteredRouter } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { authClient } from "./lib/auth";
-import { queryClient, TRPCProvider, trpcClient } from "./trpc";
 
 export function TrpcProvider({
 	children,
@@ -14,7 +13,7 @@ export function TrpcProvider({
 	router: RegisteredRouter;
 }) {
 	return (
-		<TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
+		<>
 			<AuthUIProviderTanstack
 				authClient={authClient}
 				navigate={(href) => router.navigate({ href })}
@@ -25,6 +24,6 @@ export function TrpcProvider({
 			</AuthUIProviderTanstack>
 			<Toaster />
 			<ReactQueryDevtools initialIsOpen={false} />
-		</TRPCProvider>
+		</>
 	);
 }

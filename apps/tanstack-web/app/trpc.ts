@@ -1,10 +1,7 @@
 import type { TrpcRouter } from "@habinook/trpc";
 import { QueryClient } from "@tanstack/react-query";
 import { createTRPCClient, httpBatchStreamLink } from "@trpc/client";
-import {
-	createTRPCContext,
-	createTRPCOptionsProxy,
-} from "@trpc/tanstack-react-query";
+import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import superjson from "superjson";
 
 export const queryClient = new QueryClient({
@@ -33,7 +30,7 @@ export const trpcClient = createTRPCClient<TrpcRouter>({
 	],
 });
 
-const serverHelpers = createTRPCOptionsProxy({
+const serverHelpers = createTRPCOptionsProxy<TrpcRouter>({
 	client: trpcClient,
 	queryClient: queryClient,
 });
@@ -45,4 +42,14 @@ export function getContext() {
 	};
 }
 
-export const { TRPCProvider, useTRPC } = createTRPCContext<TrpcRouter>();
+export const trpc = createTRPCOptionsProxy<TrpcRouter>({
+	client: createTRPCClient({
+		links: [
+			httpBatchStreamLink({
+				url: "/api/trpc",
+				transformer: superjson,
+			}),
+		],
+	}),
+	queryClient,
+});
