@@ -32,7 +32,7 @@ import { useAppForm } from "@habinook/ui/components/tanstack-form";
 import { Textarea } from "@habinook/ui/components/textarea";
 import { useCallback, useMemo, useState } from "react";
 import { z } from "zod";
-import { createHabitSchema } from "../../../../trpc/src/routers/habit_tracking/habits.schema";
+import { createHabitSchema } from '@habinook/trpc/src/routers/habit_tracking/habits.schema';
 import { habitTypeEnum } from "@habinook/db/features/habit-tracking/habits.schema";
 import {
 	dailyConfigSchema,
