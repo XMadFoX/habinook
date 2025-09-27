@@ -27,6 +27,7 @@
             toybox
             lefthook
             biome
+            wrangler
           ];
         };
       }

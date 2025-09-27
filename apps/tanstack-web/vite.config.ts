@@ -9,8 +9,15 @@ export default defineConfig({
 	server: {
 		port: 3000,
 	},
+	build: {
+		rollupOptions: {
+			external: ["cloudflare:sockets"],
+		},
+	},
 	plugins: [
-		cloudflare({ viteEnvironment: { name: "ssr" } }),
+		...(import.meta.env?.RUNTIME_ENV === "cloudflare"
+			? [cloudflare({ viteEnvironment: { name: "ssr" } })]
+			: []),
 		tsConfigPaths({
 			projects: ["./tsconfig.json", "../../packages/ui/tsconfig.json"],
 		}),
