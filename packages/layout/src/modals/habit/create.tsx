@@ -10,6 +10,14 @@
 // TODO:: remove after refactor
 // biome-ignore-all lint/correctness/noChildrenProp: temporary, will be refactored
 
+import { habitTypeEnum } from "@habinook/db/features/habit-tracking/habits.schema";
+import {
+	dailyConfigSchema,
+	daysOfWeekConfigSchema,
+	everyXPeriodConfigSchema,
+	timesPerPeriodConfigSchema,
+} from "@habinook/trpc/src/routers/frequency_management/frequencies.schema";
+import { createHabitSchema } from "@habinook/trpc/src/routers/habit_tracking/habits.schema";
 import { Button } from "@habinook/ui/components/button";
 import { Checkbox } from "@habinook/ui/components/checkbox";
 import {
@@ -32,14 +40,6 @@ import { useAppForm } from "@habinook/ui/components/tanstack-form";
 import { Textarea } from "@habinook/ui/components/textarea";
 import { useCallback, useMemo, useState } from "react";
 import { z } from "zod";
-import { createHabitSchema } from '@habinook/trpc/src/routers/habit_tracking/habits.schema';
-import { habitTypeEnum } from "@habinook/db/features/habit-tracking/habits.schema";
-import {
-	dailyConfigSchema,
-	daysOfWeekConfigSchema,
-	everyXPeriodConfigSchema,
-	timesPerPeriodConfigSchema,
-} from "@habinook/trpc/src/routers/frequency_management/frequencies.schema";
 
 // Local client-only enum values mirroring server (@habinook/db habit_type)
 const habitTypeValues: Readonly<typeof habitTypeEnum.enumValues> =
