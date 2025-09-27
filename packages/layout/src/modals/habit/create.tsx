@@ -39,7 +39,7 @@ import {
 	daysOfWeekConfigSchema,
 	everyXPeriodConfigSchema,
 	timesPerPeriodConfigSchema,
-} from "../../../../trpc/src/routers/frequency_management/frequencies.schema";
+} from "@habinook/trpc/src/routers/frequency_management/frequencies.schema";
 
 // Local client-only enum values mirroring server (@habinook/db habit_type)
 const habitTypeValues: Readonly<typeof habitTypeEnum.enumValues> =
