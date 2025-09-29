@@ -5,6 +5,10 @@ import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import tsConfigPaths from "vite-tsconfig-paths";
 
+const RUNTIME_ENV: string | undefined =
+	process.env?.RUNTIME_ENV || import.meta.env?.RUNTIME_ENV;
+console.log("Runtime env:", RUNTIME_ENV);
+
 export default defineConfig({
 	server: {
 		port: 3000,
@@ -15,7 +19,7 @@ export default defineConfig({
 		},
 	},
 	plugins: [
-		...(import.meta.env?.RUNTIME_ENV === "cloudflare"
+		...(RUNTIME_ENV === "cloudflare"
 			? [cloudflare({ viteEnvironment: { name: "ssr" } })]
 			: []),
 		tsConfigPaths({
