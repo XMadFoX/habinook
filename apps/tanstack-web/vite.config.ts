@@ -1,10 +1,14 @@
 import { cloudflare } from "@cloudflare/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
-import { nitroV2Plugin } from "@tanstack/nitro-v2-vite-plugin";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import vercel from "vite-plugin-vercel";
 import tsConfigPaths from "vite-tsconfig-paths";
+
+console.log(
+	`Runtime environment: ${process.env?.RUNTIME_ENV}, ${import.meta.env?.RUNTIME_ENV}`,
+);
 
 export default defineConfig({
 	server: {
@@ -16,10 +20,10 @@ export default defineConfig({
 		},
 	},
 	plugins: [
-		...(import.meta.env?.RUNTIME_ENV === "cloudflare"
+		...(process.env?.RUNTIME_ENV === "cloudflare"
 			? [cloudflare({ viteEnvironment: { name: "ssr" } })]
 			: []),
-		...(import.meta.env?.RUNTIME_ENV === "vercel" ? [nitroV2Plugin()] : []),
+		...(process.env?.RUNTIME_ENV === "vercel" ? [vercel()] : []),
 		tsConfigPaths({
 			projects: ["./tsconfig.json", "../../packages/ui/tsconfig.json"],
 		}),
