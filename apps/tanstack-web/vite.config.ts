@@ -1,5 +1,6 @@
 import { cloudflare } from "@cloudflare/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
+import { nitroV2Plugin } from "@tanstack/nitro-v2-vite-plugin";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
@@ -18,6 +19,7 @@ export default defineConfig({
 		...(import.meta.env?.RUNTIME_ENV === "cloudflare"
 			? [cloudflare({ viteEnvironment: { name: "ssr" } })]
 			: []),
+		...(import.meta.env?.RUNTIME_ENV === "vercel" ? [nitroV2Plugin()] : []),
 		tsConfigPaths({
 			projects: ["./tsconfig.json", "../../packages/ui/tsconfig.json"],
 		}),

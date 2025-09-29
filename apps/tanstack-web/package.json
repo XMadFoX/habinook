@@ -17,6 +17,7 @@
 		"@habinook/ui": "workspace:*",
 		"@tailwindcss/postcss": "^4.1.7",
 		"@tailwindcss/vite": "^4.1.7",
+		"@tanstack/nitro-v2-vite-plugin": "^1.132.0",
 		"@tanstack/react-query": "^5.66.0",
 		"@tanstack/react-query-devtools": "^5.66.0",
 		"@tanstack/react-router": "^1.132.7",
