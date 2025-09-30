@@ -14,6 +14,9 @@ if (process.env.NODE_ENV) {
 
 const envSchema = z.object({
 	DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
+	PG_PROXY_URL: z.string().min(1, "PG_PROXY_URL is required").optional(),
+	AUTH_TOKEN: z.string().min(1, "AUTH_TOKEN is required").optional(),
+	RUNTIME: z.enum(["serverless"]).optional(),
 });
 
 const env = envSchema.parse(process.env);
