@@ -9,3 +9,12 @@ services:
       POSTGRES_USER: habinook
       POSTGRES_PASSWORD: habinook
       POSTGRES_DB: habinook
+  pg-http-proxy-rs:
+    image: xmadfox/pg-http-proxy-rs:0.1.0
+    profiles: ["serverless"]
+    ports:
+      - 8080:8080
+    environment:
+      DATABASE_URL: postgres://habinook:habinook@pg:5432/habinook
+      AUTH_TOKENS: dev
+      BIND_ADDR: 0.0.0.0:8080
