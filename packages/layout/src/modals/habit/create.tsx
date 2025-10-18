@@ -27,8 +27,8 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@habinook/ui/components/dialog";
-import { ScrollArea, ScrollBar } from "@habinook/ui/components/scroll-area";
 import { Input } from "@habinook/ui/components/input";
+import { ScrollArea, ScrollBar } from "@habinook/ui/components/scroll-area";
 import {
 	Select,
 	SelectContent,
