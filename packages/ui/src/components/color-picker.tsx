@@ -83,7 +83,7 @@ const ColorPicker = ({
   const [alpha, setAlpha] = useState(
     selectedColor.alpha() * 100 || defaultColor.alpha() * 100
   );
-  const [mode, setMode] = useState("hex");
+  const [mode, setMode] = useState("oklch");
 
   // Update color when controlled value changes
   useEffect(() => {
@@ -272,6 +272,13 @@ const ColorPickerEyeDropper = ({
   ...props
 }: ColorPickerEyeDropperProps) => {
   const { setHue, setSaturation, setLightness, setAlpha } = useColorPicker();
+
+  const supportsEyeDropper =
+    typeof window !== "undefined" && "EyeDropper" in window;
+
+  if (!supportsEyeDropper) {
+    return null;
+  }
 
   const handleEyeDropper = async () => {
     try {
