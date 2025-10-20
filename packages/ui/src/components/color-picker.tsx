@@ -401,10 +401,10 @@ const ColorPickerFormat = ({ className, ...props }: ColorPickerFormatProps) => {
           <Input
             className={cn(
               "h-8 rounded-r-none bg-secondary px-2 text-xs shadow-none",
-              index && "rounded-l-none",
+              "rounded-l-none",
               className
             )}
-            key={index}
+            key={value}
             readOnly
             type="text"
             value={value}
@@ -455,7 +455,7 @@ const ColorPickerFormat = ({ className, ...props }: ColorPickerFormatProps) => {
               index && "rounded-l-none",
               className
             )}
-            key={index}
+            key={value}
             readOnly
             type="text"
             value={value}
