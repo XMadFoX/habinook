@@ -35,4 +35,5 @@ jobs:
         run: nix flake check
 
       - name: Run Biome
-        run: nix run .#biome -- ci . --cache --max-diagnostics=0
+        run: nix develop --impure --command bash -c "biome ci . --cache --max-diagnostics=0"
+
