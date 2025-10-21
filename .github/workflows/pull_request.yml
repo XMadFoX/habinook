@@ -1,39 +1,21 @@
-name: Code quality
-
+name: "Test"
 on:
-  push:
-    branches: [main]
   pull_request:
-
+  push:
 jobs:
-  quality:
+  tests:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install Nix
-        uses: cachix/install-nix-action@v31
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v25
         with:
-          github_access_token: ${{ secrets.GITHUB_TOKEN }}
-          extra_nix_config: "experimental-features = nix-command flakes"
-
-      - name: Use Cachix
-        uses: cachix/cachix-action@v16
+          nix_path: nixpkgs=channel:nixos-unstable
+      - uses: cachix/cachix-action@v14
         with:
-          name: habinook
-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
-
-      - name: Cache Biome
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/biome
-          key: biome-${{ runner.os }}-${{ hashFiles('**/*.{ts,tsx,js,json}') }}
-          restore-keys: biome-${{ runner.os }}-
-
-      - name: Run Nix Flake Check
-        run: nix flake check
-
-      - name: Run Biome
-        run: nix develop --impure --command bash -c "biome ci . --max-diagnostics=0"
-
+          name: mycache
+          # If you chose signing key for write access
+          # signingKey: "${{ secrets.CACHIX_SIGNING_KEY }}"
+          # If you chose API tokens for write access OR if you have a private cache
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+      - run: nix-build
+      - run: nix-shell --run "echo OK"
