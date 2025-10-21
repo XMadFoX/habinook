@@ -1,7 +1,7 @@
 "use client";
 
-import Color from "color";
 import { useOklchConverter } from "@builtwithjavascript/oklch-converter";
+import Color from "color";
 
 import { PipetteIcon } from "lucide-react";
 import { Slider } from "radix-ui";
@@ -17,7 +17,8 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/button";
+import { Input } from "@/components/input";
 import {
 	Select,
 	SelectContent,
@@ -25,8 +26,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/select";
-import { Input } from "@/components/input";
-import { Button } from "@/components/button";
+import { cn } from "@/lib/utils";
 
 interface ColorPickerContextValue {
 	hue: number;
