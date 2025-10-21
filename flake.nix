@@ -30,6 +30,7 @@
             wrangler
           ];
         };
+        packages.default = pkgs.hello;
       }
     );
 }
