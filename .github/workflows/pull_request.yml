@@ -2,20 +2,29 @@ name: "Test"
 on:
   pull_request:
   push:
+
 jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      # Устанавливаем Nix
       - uses: cachix/install-nix-action@v25
         with:
           nix_path: nixpkgs=channel:nixos-unstable
-      - uses: cachix/cachix-action@v14
+
+      # Настройка Cachix (только для скачивания бинарных кэшей)
+      - uses: cachix/cachix-action@v16
         with:
           name: habinook
-          # If you chose signing key for write access
-          # signingKey: "${{ secrets.CACHIX_SIGNING_KEY }}"
-          # If you chose API tokens for write access OR if you have a private cache
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
-      - run: nix-build
-      - run: nix-shell --run "echo OK"
+
+      # Проверка flake
+      - run: nix flake check
+
+      # Сборка пакета из flake (пример: defaultPackage)
+      - run: nix build .#defaultPackage.x86_64-linux
+
+      # Запуск devShell из flake
+      - run: nix develop . --run "echo OK"
