@@ -24,4 +24,4 @@ jobs:
 
       # Запускаем сборку devShell
       - name: Build devenv
-        run: nix develop --command bash -c "node -v && pnpm -v && bun --version"
+        run: devenv shell
