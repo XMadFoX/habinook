@@ -9,23 +9,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v5
-    - uses: cachix/install-nix-action@v31
-    - uses: cachix/cachix-action@v16
-      with:
-        name: habinook
-        authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
-    - name: Install devenv.sh
-      run: nix profile install nixpkgs#devenv
+      - uses: actions/checkout@v5
+      - uses: cachix/install-nix-action@v31
+      - uses: cachix/cachix-action@v16
+        with:
+          name: habinook
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+      - name: Install devenv.sh
+        run: nix profile install nixpkgs#devenv
 
-    - name: Build the devenv shell and run any pre-commit hooks
-      run: devenv test
+      - name: Build the devenv shell and run any pre-commit hooks
+        run: devenv test
 
-    - name: Run a single command in the devenv shell
-      run: devenv shell hello
-
-    - name: Run a multi-line command in the devenv shell
-      shell: devenv shell bash -- -e {0}
-      run: |
-        hello
-        say-bye
+      - name: Run a single command in the devenv shell
+        run: devenv shell hello
