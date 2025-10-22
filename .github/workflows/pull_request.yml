@@ -9,17 +9,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
-      - uses: cachix/install-nix-action@v31
-      - uses: cachix/cachix-action@v16
+      - name: Checkout repo
+        uses: actions/checkout@v5
+
+      # 1. Устанавливаем Nix
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          # важно — добавляем experimental features, иначе flakes не работают
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            substituters = https://cache.nixos.org https://habinook.cachix.org
+            trusted-public-keys = habinook.cachix.org-1:LK70GVcmF7Cj3lmrUGWn8kH9rwsEBshEkA5G+YQ0Uu8=
+
+      # 2. Включаем Cachix
+      - name: Setup Cachix
+        uses: cachix/cachix-action@v16
         with:
           name: habinook
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
-      - name: Install devenv.sh
-        run: devenv shell
 
-      - name: Build the devenv shell and run any pre-commit hooks
+      # 3. Устанавливаем devenv в nix profile (чтобы был в PATH)
+      - name: Install devenv
+        run: nix profile install github:cachix/devenv/latest
+
+      # 4. Билдим окружение и тесты (автоматически использует кеш)
+      - name: Build devenv environment
         run: devenv test
 
-      - name: Run a single command in the devenv shell
-        run: devenv shell hello
+      # 5. Пример запуска команды внутри окружения
+      - name: Run command inside devenv
+        run: devenv shell -- echo "✅ Devenv works!" && devenv shell hello
