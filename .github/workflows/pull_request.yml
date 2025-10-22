@@ -1,5 +1,4 @@
-name: Build and Cache
-
+name: CI
 on:
   push:
     branches: [main]
@@ -10,22 +9,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Install Nix
-        uses: cachix/install-nix-action@v31
+      # Устанавливаем Nix
+      - uses: cachix/install-nix-action@v31
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
-          extra_nix_config: |
-            experimental-features = nix-command flakes
 
-      - name: Use Cachix cache
-        uses: cachix/cachix-action@v15
+      # Включаем Cachix
+      - uses: cachix/cachix-action@v16
         with:
           name: habinook
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
-          skipPush: false
 
-      - name: Build flake output
-        run: nix build .#default
+      # Запускаем сборку devShell
+      - name: Build devenv
+        run: nix develop --command bash -c "node -v && pnpm -v && bun --version"
