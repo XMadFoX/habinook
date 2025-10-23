@@ -38,8 +38,8 @@ export function DueTodaySection({
 			{loadingHabits ? (
 				<Card>
 					<CardHeader>
-						<CardTitle className="animate-pulse h-5 w-40 bg-muted rounded" />
-						<CardDescription className="animate-pulse h-4 w-64 bg-muted rounded" />
+						<CardTitle className="animate-pulse h-5 w-24 sm:w-40 bg-muted rounded" />
+						<CardDescription className="animate-pulse h-4 w-40 sm:w-64 bg-muted rounded" />
 					</CardHeader>
 					<CardContent className="grid gap-3">
 						<div className="animate-pulse h-4 w-full bg-muted rounded" />
