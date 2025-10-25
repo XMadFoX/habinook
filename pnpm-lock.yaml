@@ -178,6 +178,9 @@ importers:
       react-hook-form:
         specifier: ^7.53.0
         version: 7.56.1(react@19.1.1)
+      ts-pattern:
+        specifier: ^5.8.0
+        version: 5.8.0
       zod:
         specifier: ^3.25.67
         version: 3.25.67
@@ -4880,6 +4883,9 @@ packages:
 
   tr46@0.0.3:
     resolution: {integrity: sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==}
+
+  ts-pattern@5.8.0:
+    resolution: {integrity: sha512-kIjN2qmWiHnhgr5DAkAafF9fwb0T5OhMVSWrm8XEdTFnX6+wfXwYOFjeF86UZ54vduqiR7BfqScFmXSzSaH8oA==}
 
   tsconfck@3.1.5:
     resolution: {integrity: sha512-CLDfGgUp7XPswWnezWwsCRxNmgQjhYq3VXHM0/XIRxhVrKw0M1if9agzryh1QS3nxjCROvV+xWxoJO1YctzzWg==}
@@ -9755,6 +9761,8 @@ snapshots:
       is-number: 7.0.0
 
   tr46@0.0.3: {}
+
+  ts-pattern@5.8.0: {}
 
   tsconfck@3.1.5(typescript@5.8.3):
     optionalDependencies:
